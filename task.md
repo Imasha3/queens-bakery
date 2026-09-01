@@ -1,0 +1,25 @@
+# Task List - Queen's Bakery Inquiries, Custom Orders, Products, & Creations Management
+
+- [x] Complete the Admin Inquiries tab under `/admin` (listing all queries)
+- [x] Implement the Admin response/quotation form inside inquiry detail view (saving status, quotedPrice, availability, adminMessage, respondedAt to Firestore)
+- [x] Enhance Admin Inquiry Response form save feedback states (Saving..., Saved ✓, Error message)
+- [x] Update Customer My Inquiries `/account/inquiries` to show admin response details dynamically
+- [x] Complete the Admin Custom Orders tab under `/admin` (listing all custom orders)
+- [x] Implement the Custom Order response/quotation form in detail view (saving status, quotedPrice, adminMessage, updatedAt, respondedAt to Firestore)
+- [x] Hook the customer dashboard "My Orders" button to `/account/orders` and create `/account/orders/page.tsx`
+- [x] Create Customer Custom Order submission form at `/custom-orders`
+- [x] Integrate robust property fallbacks inside `/admin` and `/account/orders` custom orders details rendering
+- [x] Remove the old Products placeholder alert popup/message completely
+- [x] Connect Admin Products Management page under `/admin` using Firestore `products` collection (Add, Edit, Delete)
+- [x] Initialize and export Firebase Storage from `src/lib/firebase.ts`
+- [x] Replace manual primary and gallery text inputs with interactive file selector inputs in Product forms
+- [x] Perform Firebase Storage uploads to `products/{productId}/primary` and `products/{productId}/gallery` and write URLs to Firestore
+- [x] Implement graceful broken-image fallback (onError) inside catalog listing and form preview elements
+- [x] Remove the old Creations placeholder alert popup/message completely
+- [x] Connect Admin Creations Management page under `/admin` using Firestore `creations` collection (Add, Edit, Delete, Active status)
+- [x] Update storefront `/our-creations` page to pull active creations from Firestore dynamically
+- [x] Create `.env.local` template file for Cloudinary configurations
+- [x] Implement secure server-side delete API route for Cloudinary image deletion (`/api/admin/delete-cloudinary-image`)
+- [x] Update Admin Creations forms to upload to Cloudinary directly client-side using unsigned presets
+- [x] Clear Firebase Storage dependency from Our Creations catalog uploads
+- [x] Run build checks and verify compilation success

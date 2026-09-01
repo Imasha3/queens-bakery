@@ -1,0 +1,118 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for Role-Based Access Control (RBAC)
+    function isAdminDocExists() {
+      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function getAdminData() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data;
+    }
+
+    function isActiveAdmin() {
+      return isAdminDocExists() &&
+        (
+          !('active' in getAdminData()) ||
+          getAdminData().active == true
+        );
+    }
+
+    function isSuperAdmin() {
+      return isActiveAdmin() &&
+        (
+          getAdminData().role == 'super_admin' ||
+          getAdminData().role == 'admin'
+        );
+    }
+
+    function hasPerm(permKey) {
+      return isActiveAdmin() && (
+        isSuperAdmin() ||
+        (
+          'permissions' in getAdminData() &&
+          getAdminData().permissions != null &&
+          permKey in getAdminData().permissions &&
+          getAdminData().permissions[permKey] == true
+        )
+      );
+    }
+
+    // Admins / Staff collection
+    match /admins/{userId} {
+      // 1. Authenticated user can read their own profile (avoids get() recursion during auth state lookup)
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // 2. Active super admin or staff with manageStaff permission can read all staff profiles
+      allow read: if request.auth != null && (isSuperAdmin() || hasPerm('manageStaff'));
+
+      // 3. Active super admin or staff with manageStaff permission can create/update/delete staff profiles
+      allow write: if request.auth != null && (isSuperAdmin() || hasPerm('manageStaff'));
+    }
+
+    // Audit logs collection (Immutable activity history)
+    match /auditLogs/{logId} {
+      allow read: if hasPerm('viewAuditLogs') || isSuperAdmin();
+      allow create: if isActiveAdmin();
+      allow update, delete: if false;
+    }
+
+    // Customer Communication Reply logs (Immutable communication history)
+    match /replyLogs/{replyId} {
+      allow read: if isActiveAdmin();
+      allow create: if isActiveAdmin();
+      allow update, delete: if false;
+    }
+
+    // Settings collection (Social media links, site config)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if hasPerm('manageSettings') || isSuperAdmin();
+    }
+
+    // Categories collection
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if hasPerm('manageCategories') || isSuperAdmin();
+    }
+
+    // Products collection
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if hasPerm('manageProducts') || isSuperAdmin();
+    }
+
+    // Our Creations collection
+    match /creations/{creationId} {
+      allow read: if true;
+      allow write: if hasPerm('manageCreations') || isSuperAdmin();
+    }
+
+    // Inquiries collection
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read: if hasPerm('viewInquiries') || hasPerm('replyInquiries') || isSuperAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow update, delete: if hasPerm('replyInquiries') || isSuperAdmin();
+    }
+
+    // Custom Orders collection
+    match /customOrders/{orderId} {
+      allow create: if true;
+      allow read: if hasPerm('viewOrders') || hasPerm('manageOrders') || isSuperAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow update, delete: if hasPerm('manageOrders') || isSuperAdmin();
+    }
+
+    // Contacts collection
+    match /contacts/{contactId} {
+      allow create: if true;
+      allow read: if hasPerm('viewContacts') || hasPerm('manageContacts') || isSuperAdmin();
+      allow update, delete: if hasPerm('manageContacts') || isSuperAdmin();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
+    }
+  }
+}
