@@ -14,6 +14,7 @@ import SocialSection from '@/components/SocialSection';
 import WhatsAppCTA from '@/components/WhatsAppCTA';
 import Footer from '@/components/Footer';
 import InquiryModal from '@/components/InquiryModal';
+import CreationsSection from '@/components/CreationsSection';
 import { fetchCategories, Category, resolveCategoryCoverImage } from '@/lib/categories';
 import { testFirebaseConnection } from '@/lib/firebase-test';
 
@@ -157,7 +158,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. How To Order Section */}
+        {/* 4. Our Creations Carousel Showcase */}
+        <CreationsSection />
+
+        {/* 5. How To Order Section */}
         <HowToOrder />
 
         {/* 5. Delivery Areas Section */}

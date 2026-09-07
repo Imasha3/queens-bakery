@@ -6,9 +6,9 @@ import { useApp } from '@/context/AppContext';
 import Logo from './Logo';
 
 export default function Footer() {
-  const { t, socialSettings } = useApp();
+  const { t, socialSettings, setInquiryModalOpen, language } = useApp();
 
-  const quickLinks = [
+  const navLinks = [
     { label: t('nav.home'), href: '/' },
     { label: t('nav.products'), href: '/products' },
     { label: t('nav.creations'), href: '/our-creations' },
@@ -17,34 +17,55 @@ export default function Footer() {
     { label: t('nav.contact'), href: '/contact' },
   ];
 
-  const hasSocialLinks = Boolean(socialSettings?.facebook || socialSettings?.tiktok || socialSettings?.whatsapp);
+  const deliveryList = [
+    'Negombo',
+    'Seeduwa',
+    'Katunayake',
+    'Ja-Ela',
+    'Minuwangoda',
+    'Dankotuwa',
+    'Wennappuwa',
+    'Marawila',
+  ];
 
   return (
-    <footer className="bg-card border-t border-border mt-auto transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+    <footer className="bg-card border-t border-border mt-auto transition-colors duration-300 relative overflow-hidden">
+      {/* Top Accent Line */}
+      <div className="h-1 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
+
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
           
-          {/* Brand Info Column */}
-          <div className="md:col-span-6 space-y-4">
-            <Link href="/">
+          {/* Brand Info Column (4 cols) */}
+          <div className="lg:col-span-4 space-y-5 text-center md:text-left">
+            <Link href="/" className="inline-block">
               <Logo />
             </Link>
-            <p className="text-sm font-light text-muted-foreground max-w-sm leading-relaxed">
+            <p className="text-xs sm:text-sm font-light text-muted-foreground leading-relaxed max-w-sm mx-auto md:mx-0">
               {t('footer.tagline')}
             </p>
+            <div className="pt-2">
+              <button
+                onClick={() => setInquiryModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2.5 text-xs font-semibold transition-all duration-200"
+              >
+                <span>💬</span>
+                <span>{t('hero.requestPrice')}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Quick Links Column */}
-          <div className="md:col-span-3 space-y-4">
-            <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase">
+          {/* Navigation Links Column (3 cols) */}
+          <div className="lg:col-span-3 space-y-4 text-center md:text-left">
+            <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase border-b border-border/60 pb-2 inline-block md:block">
               {t('footer.quickLinks')}
             </h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
+            <ul className="grid grid-cols-2 gap-2 text-xs font-light text-muted-foreground">
+              {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs font-light text-muted-foreground hover:text-primary transition-colors duration-200"
+                    className="hover:text-primary transition-colors duration-200 block py-1"
                   >
                     {link.label}
                   </Link>
@@ -53,62 +74,80 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Socials & Contacts Column */}
-          {hasSocialLinks && (
-            <div className="md:col-span-3 space-y-4">
-              <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase">
-                {t('footer.followUs')}
-              </h4>
-              <ul className="space-y-2">
-                {socialSettings?.facebook && (
-                  <li>
-                    <a
-                      href={socialSettings.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-xs font-light text-muted-foreground hover:text-primary transition-colors duration-200"
-                    >
-                      Facebook
-                    </a>
-                  </li>
-                )}
-                {socialSettings?.tiktok && (
-                  <li>
-                    <a
-                      href={socialSettings.tiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-xs font-light text-muted-foreground hover:text-primary transition-colors duration-200"
-                    >
-                      TikTok
-                    </a>
-                  </li>
-                )}
-                {socialSettings?.whatsapp && (
-                  <li>
-                    <a
-                      href={socialSettings.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-xs font-light text-muted-foreground hover:text-primary transition-colors duration-200"
-                    >
-                      WhatsApp
-                    </a>
-                  </li>
-                )}
-              </ul>
+          {/* Delivery Coverage Column (3 cols) */}
+          <div className="lg:col-span-3 space-y-4 text-center md:text-left">
+            <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase border-b border-border/60 pb-2 inline-block md:block">
+              🚚 {language === 'en' ? 'Delivery Areas' : 'බෙදාහරින ප්‍රදේශ'}
+            </h4>
+            <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
+              {deliveryList.map((area) => (
+                <span
+                  key={area}
+                  className="text-[11px] font-light bg-accent/40 text-foreground/80 border border-border/60 rounded-lg px-2.5 py-1"
+                >
+                  {area}
+                </span>
+              ))}
             </div>
-          )}
+            <p className="text-[11px] text-muted-foreground/80 pt-1">
+              *Regional delivery only
+            </p>
+          </div>
+
+          {/* Socials & Connect Column (2 cols) */}
+          <div className="lg:col-span-2 space-y-4 text-center md:text-left">
+            <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase border-b border-border/60 pb-2 inline-block md:block">
+              {t('footer.followUs')}
+            </h4>
+            
+            <div className="flex flex-col gap-2.5 items-center md:items-start text-xs text-muted-foreground">
+              {socialSettings?.facebook && (
+                <a
+                  href={socialSettings.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <span>🌐</span>
+                  <span>Facebook</span>
+                </a>
+              )}
+              {socialSettings?.tiktok && (
+                <a
+                  href={socialSettings.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <span>🎵</span>
+                  <span>TikTok</span>
+                </a>
+              )}
+              {socialSettings?.whatsapp && (
+                <a
+                  href={socialSettings.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <span>💬</span>
+                  <span>WhatsApp</span>
+                </a>
+              )}
+            </div>
+          </div>
 
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-border/60 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <p className="text-[11px] font-light text-muted-foreground">
+        <div className="mt-12 border-t border-border/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs font-light text-muted-foreground">
+          <p>
             &copy; {new Date().getFullYear()} Queen's Bakery. {t('footer.rights')}
           </p>
-          <div className="text-[10px] font-light text-muted-foreground/60 font-medium">
-            Negombo, Sri Lanka
+          <div className="flex items-center gap-4 text-[11px]">
+            <span>Negombo, Sri Lanka</span>
+            <span>•</span>
+            <Link href="/contact" className="hover:text-primary transition-colors">Contact Support</Link>
           </div>
         </div>
       </div>

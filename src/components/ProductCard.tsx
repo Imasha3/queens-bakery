@@ -41,17 +41,17 @@ export default function ProductCard({ id, slug, image, name, category, descripti
   };
 
   return (
-    <div className="flex flex-col h-full rounded-t-none rounded-b-2xl overflow-hidden bg-card border border-border/80 shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-0.5">
+    <div className="flex flex-col h-full rounded-2xl md:rounded-3xl overflow-hidden bg-card border border-border/80 shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
       {/* Product Image Link */}
-      <Link href={`/products/${slug}`} className="relative aspect-video w-full overflow-hidden bg-accent/25 block rounded-none">
-        <span className="absolute top-3 left-3 z-10 rounded-full bg-primary/95 text-primary-foreground px-3 py-1 text-[11px] font-semibold tracking-wide shadow-sm">
+      <Link href={`/products/${slug}`} className="relative aspect-[4/3] w-full overflow-hidden bg-accent/25 block">
+        <span className="absolute top-3 left-3 z-10 rounded-full bg-primary/95 text-primary-foreground px-3.5 py-1 text-[11px] font-semibold tracking-wide shadow-md backdrop-blur-xs">
           {category}
         </span>
         {hasValidImage ? (
           <img
             src={validImageUrl}
             alt={name}
-            className="h-full w-full object-cover transform scale-100 group-hover:scale-103 transition-transform duration-500 rounded-none"
+            className="h-full w-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
         ) : (
@@ -65,32 +65,32 @@ export default function ProductCard({ id, slug, image, name, category, descripti
       </Link>
 
       {/* Product Content */}
-      <div className="flex flex-col flex-grow p-5">
+      <div className="flex flex-col flex-grow p-6">
         <Link href={`/products/${slug}`} className="block">
-          <h3 className="font-serif text-lg font-bold text-foreground mb-1 leading-snug group-hover:text-primary transition-colors duration-200">
+          <h3 className="font-serif text-lg md:text-xl font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors duration-200">
             {name}
           </h3>
         </Link>
         
-        <p className="text-xs font-light text-muted-foreground mb-5 line-clamp-2 leading-relaxed">
+        <p className="text-xs md:text-sm font-light text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
           {description}
         </p>
 
         {/* Action Buttons */}
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-2 border-t border-border/60">
+        <div className="mt-auto grid grid-cols-2 gap-2.5 pt-3 border-t border-border/60">
           <Link
             href={`/products/${slug}`}
-            className="flex items-center justify-center rounded-lg border border-border hover:border-primary/50 text-xs font-semibold text-foreground hover:bg-accent/10 py-2.5 transition-all duration-200 text-center"
+            className="flex items-center justify-center rounded-xl border border-border/80 hover:border-primary/50 text-xs font-semibold text-foreground hover:bg-accent/20 py-3 transition-all duration-200 text-center"
           >
             {t('products.viewDetails')}
           </Link>
           
           <button
             onClick={handleInquiryToggle}
-            className={`flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold py-2.5 transition-all duration-200 ${
+            className={`flex items-center justify-center gap-1.5 rounded-xl text-xs font-semibold py-3 transition-all duration-200 cursor-pointer ${
               isAdded
                 ? 'bg-accent text-accent-foreground border border-primary/20 shadow-inner'
-                : 'bg-primary text-primary-foreground shadow-sm hover:opacity-95'
+                : 'bg-primary text-primary-foreground shadow-md hover:opacity-95'
             }`}
           >
             {isAdded ? (

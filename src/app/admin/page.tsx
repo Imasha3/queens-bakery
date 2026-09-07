@@ -76,6 +76,7 @@ export default function AdminDashboardPage() {
   });
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'inquiries' | 'customOrders' | 'products' | 'categories' | 'creations' | 'contacts' | 'settings' | 'staff' | 'audit'>('dashboard');
+  const [isAdminMobileMenuOpen, setIsAdminMobileMenuOpen] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string[]>([]);
 
   // Inquiries State
@@ -1940,23 +1941,63 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-slate-950 text-slate-100 font-sans min-w-0 max-w-full overflow-x-hidden">
       
+      {/* Mobile Top Navigation Bar (lg:hidden) */}
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAdminMobileMenuOpen(!isAdminMobileMenuOpen)}
+            className="p-2 text-slate-300 hover:text-white rounded-lg bg-slate-800/80 border border-slate-700/60"
+            aria-label="Toggle Admin Menu"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+          <Logo heightClass="h-8" />
+        </div>
+        <span className="text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full">
+          {activeTab}
+        </span>
+      </header>
+
+      {/* Backdrop overlay for mobile drawer */}
+      {isAdminMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
+          onClick={() => setIsAdminMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar navigation */}
-      <aside className="w-64 border-r border-slate-800 bg-slate-900 flex flex-col">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
+          isAdminMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+        }`}
+      >
         {/* Brand */}
-        <div className="p-6 border-b border-slate-800 flex items-center gap-2 pointer-events-none">
+        <div className="p-6 border-b border-slate-800 flex items-center justify-between">
           <Logo />
+          <button
+            onClick={() => setIsAdminMobileMenuOpen(false)}
+            className="lg:hidden text-slate-400 hover:text-white p-1"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Menu Items */}
-        <nav className="flex-grow p-4 space-y-1.5">
+        <nav className="flex-grow p-4 space-y-1.5 overflow-y-auto">
           {hasPermission('viewDashboard') && (
             <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 ${
+              onClick={() => {
+                setActiveTab('dashboard');
+                setIsAdminMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 ${
                 activeTab === 'dashboard'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -1969,10 +2010,11 @@ export default function AdminDashboardPage() {
               onClick={() => {
                 setActiveTab('inquiries');
                 setSelectedInquiry(null);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'inquiries'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -1985,10 +2027,11 @@ export default function AdminDashboardPage() {
               onClick={() => {
                 setActiveTab('customOrders');
                 setSelectedCustomOrder(null);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'customOrders'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2003,10 +2046,11 @@ export default function AdminDashboardPage() {
                 setSelectedProduct(null);
                 setIsEditingProduct(false);
                 setIsAddingProduct(false);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'products'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2021,10 +2065,11 @@ export default function AdminDashboardPage() {
                 setSelectedCategoryItem(null);
                 setIsEditingCategory(false);
                 setIsAddingCategory(false);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'categories'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2039,10 +2084,11 @@ export default function AdminDashboardPage() {
                 setSelectedCreation(null);
                 setIsEditingCreation(false);
                 setIsAddingCreation(false);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'creations'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2055,10 +2101,11 @@ export default function AdminDashboardPage() {
               onClick={() => {
                 setActiveTab('contacts');
                 setSelectedContactMessage(null);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'contacts'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2070,10 +2117,11 @@ export default function AdminDashboardPage() {
             <button
               onClick={() => {
                 setActiveTab('settings');
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'settings'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2088,10 +2136,11 @@ export default function AdminDashboardPage() {
                 setSelectedStaff(null);
                 setIsEditingStaff(false);
                 setIsAddingStaff(false);
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'staff'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2103,10 +2152,11 @@ export default function AdminDashboardPage() {
             <button
               onClick={() => {
                 setActiveTab('audit');
+                setIsAdminMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-none transition-colors duration-200 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'audit'
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
               }`}
             >
@@ -2131,7 +2181,7 @@ export default function AdminDashboardPage() {
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 rounded-none border border-slate-800 hover:border-rose-500/50 hover:bg-rose-500/10 py-2.5 text-xs font-bold text-slate-400 hover:text-rose-400 transition-all duration-200"
+            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-800 hover:border-rose-500/50 hover:bg-rose-500/10 py-2.5 text-xs font-bold text-slate-400 hover:text-rose-400 transition-all duration-200"
           >
             🚪 Logout
           </button>
@@ -2139,9 +2189,9 @@ export default function AdminDashboardPage() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-grow flex flex-col">
-        {/* Top Navbar */}
-        <header className="h-16 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between px-8">
+      <main className="flex-grow flex flex-col min-w-0 max-w-full overflow-x-hidden">
+        {/* Top Header */}
+        <header className="hidden lg:flex h-16 border-b border-slate-800 bg-slate-900/50 items-center justify-between px-8">
           <h2 className="text-sm font-semibold tracking-wide uppercase text-slate-400">
             System Dashboard
           </h2>
@@ -2154,7 +2204,7 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Dash Container */}
-        <div className="p-8 flex-grow space-y-8 overflow-y-auto">
+        <div className="p-4 md:p-8 flex-grow space-y-8 overflow-y-auto max-w-full min-w-0">
           
           {activeTab === 'dashboard' && (
             <>

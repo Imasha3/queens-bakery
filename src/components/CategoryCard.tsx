@@ -14,10 +14,10 @@ export default function CategoryCard({ image, name, description, href }: Categor
   const { t } = useApp();
 
   return (
-    <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-card border border-border/80 shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
+    <div className="flex flex-col h-full rounded-2xl md:rounded-3xl overflow-hidden bg-card border border-border/80 shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
       {/* Category Image */}
-      <div className="relative aspect-square w-full overflow-hidden bg-accent/20">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+      <div className="relative aspect-[4/3] sm:aspect-square w-full overflow-hidden bg-accent/20">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300 z-10" />
         {typeof image === 'string' && image.trim() !== '' ? (
           <img
             src={image.trim()}
@@ -37,7 +37,7 @@ export default function CategoryCard({ image, name, description, href }: Categor
         <h3 className="font-serif text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-200">
           {name}
         </h3>
-        <p className="text-sm font-light text-muted-foreground mb-6 line-clamp-3 leading-relaxed">
+        <p className="text-sm font-light text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
           {description}
         </p>
 
