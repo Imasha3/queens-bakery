@@ -31,7 +31,7 @@ export default function SocialSection() {
             {reviews.map((rev) => (
               <div
                 key={rev.name}
-                className="flex flex-col justify-between p-8 rounded-2xl bg-card border border-border shadow-sm hover:shadow-md transition-shadow duration-300 relative"
+                className="flex flex-col justify-between p-8 rounded-none bg-card border border-border shadow-sm hover:shadow-md transition-shadow duration-300 relative"
               >
                 {/* Quote decoration */}
                 <span className="absolute top-4 right-6 text-7xl font-serif text-primary/10 select-none pointer-events-none">
@@ -69,7 +69,7 @@ export default function SocialSection() {
         {/* Social Media Link cards */}
         {hasSocialLinks && (
           <div className="border-t border-border/60 pt-16">
-            <div className="rounded-3xl bg-accent/10 border border-border/80 p-8 md:p-12 text-center max-w-4xl mx-auto space-y-6">
+            <div className="rounded-none bg-accent/10 border border-border/80 p-8 md:p-12 text-center max-w-4xl mx-auto space-y-6">
               <h3 className="font-serif text-2xl md:text-3xl font-bold text-foreground">
                 {t('social.title')}
               </h3>
@@ -84,7 +84,7 @@ export default function SocialSection() {
                     href={socialSettings.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-xl bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* Facebook SVG Logo */}
                     <svg className="w-5 h-5 text-blue-600 fill-current" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ export default function SocialSection() {
                     href={socialSettings.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-xl bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* TikTok SVG Logo */}
                     <svg className="w-5 h-5 text-foreground fill-current" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@ export default function SocialSection() {
                     href={socialSettings.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-xl bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* WhatsApp SVG Logo */}
                     <svg className="w-5 h-5 text-emerald-500 fill-current" viewBox="0 0 24 24">

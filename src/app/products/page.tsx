@@ -106,16 +106,16 @@ function ProductsContent() {
             <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />
           </div>
 
-          {/* Filters & Search Controls - Clean, moderately rounded-xl container */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card border border-border/80 p-5 rounded-xl shadow-xs">
-            {/* Search Input - rounded-lg */}
+          {/* Filters & Search Controls - Clean, square rounded-none container */}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card border border-border/80 p-5 rounded-none shadow-xs">
+            {/* Search Input - rounded-none */}
             <div className="relative w-full md:max-w-xs">
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-border/80 bg-background px-4 py-2.5 pl-9 text-xs text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                className="w-full rounded-none border border-border/80 bg-background px-4 py-2.5 pl-9 text-xs text-foreground focus:outline-none focus:border-primary/60 transition-colors"
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +129,7 @@ function ProductsContent() {
               </svg>
             </div>
 
-            {/* Category Filters - rounded-lg buttons */}
+            {/* Category Filters - rounded-none buttons */}
             <div className="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat;
@@ -137,7 +137,7 @@ function ProductsContent() {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`rounded-lg px-3.5 py-2 text-xs font-semibold tracking-wide border transition-all duration-200 cursor-pointer ${
+                    className={`rounded-none px-3.5 py-2 text-xs font-semibold tracking-wide border transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-primary text-primary-foreground border-primary shadow-xs'
                         : 'bg-background hover:bg-accent/40 border-border/80 text-muted-foreground hover:text-foreground'
@@ -152,14 +152,14 @@ function ProductsContent() {
 
           {/* Products Grid / Loading State / Empty State */}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-card rounded-xl border border-border/80">
+            <div className="flex flex-col items-center justify-center py-20 bg-card rounded-none border border-border/80">
               <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mb-3" />
               <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
                 Loading Bakes...
               </span>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-20 bg-card rounded-xl border border-dashed border-border/80">
+            <div className="text-center py-20 bg-card rounded-none border border-dashed border-border/80">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

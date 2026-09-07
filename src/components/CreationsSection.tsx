@@ -146,7 +146,7 @@ export default function CreationsSection() {
               <div
                 key={item.id || idx}
                 onClick={() => setActiveIdx(idx)}
-                className="flex-shrink-0 w-72 sm:w-80 md:w-96 aspect-[4/3] rounded-2xl md:rounded-3xl overflow-hidden bg-accent/20 border border-border/80 shadow-md hover:shadow-xl transition-all duration-500 group cursor-pointer relative snap-start hover:-translate-y-1"
+                className="flex-shrink-0 w-72 sm:w-80 md:w-96 aspect-[4/3] rounded-none overflow-hidden bg-accent/20 border border-border/80 shadow-md hover:shadow-xl transition-all duration-500 group cursor-pointer relative snap-start hover:-translate-y-1"
               >
                 {/* Gradient tint */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-300 z-10" />
@@ -154,12 +154,12 @@ export default function CreationsSection() {
                 <img
                   src={primaryImg}
                   alt="Queen's Bakery Creation"
-                  className="w-full h-full object-cover transform scale-100 group-hover:scale-108 transition-transform duration-700"
+                  className="w-full h-full object-cover transform scale-100 group-hover:scale-108 transition-transform duration-700 rounded-none"
                   loading="lazy"
                 />
 
                 {/* Corner Hover Icon */}
-                <div className="absolute bottom-4 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-background/80 backdrop-blur-md text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
+                <div className="absolute bottom-4 right-4 z-20 flex h-9 w-9 items-center justify-center rounded-none bg-background/80 backdrop-blur-md text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                   </svg>
@@ -201,7 +201,7 @@ export default function CreationsSection() {
               <img
                 src={items[activeIdx].images[0].trim()}
                 alt="Queen's Bakery Creation Large Preview"
-                className="max-w-full max-h-[80vh] object-contain rounded-2xl border border-white/10 shadow-2xl bg-black"
+                className="max-w-full max-h-[80vh] object-contain rounded-none border border-white/10 shadow-2xl bg-black"
               />
             ) : null}
           </div>

@@ -99,7 +99,7 @@ export default function HowToOrder() {
           {steps.map((step, idx) => (
             <div
               key={step.num}
-              className="relative flex flex-col items-center text-center p-6 rounded-2xl md:rounded-3xl bg-card border border-border/80 shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300 group hover:-translate-y-1"
+              className="relative flex flex-col items-center text-center p-6 rounded-none bg-card border border-border/80 shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300 group hover:-translate-y-1"
             >
               {/* Step Connection Line (for desktop) */}
               {idx < steps.length - 1 && (
@@ -107,12 +107,12 @@ export default function HowToOrder() {
               )}
 
               {/* Number Pill */}
-              <div className="absolute top-4 right-4 rounded-full bg-primary/10 text-primary text-[10px] font-bold px-2.5 py-0.5 border border-primary/20">
+              <div className="absolute top-4 right-4 rounded-none bg-primary/10 text-primary text-[10px] font-bold px-2.5 py-0.5 border border-primary/20">
                 {step.num}
               </div>
 
               {/* Icon Container */}
-              <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-300 shadow-sm">
+              <div className="flex items-center justify-center w-14 h-14 rounded-none bg-primary/10 text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-300 shadow-sm">
                 {step.icon}
               </div>
 

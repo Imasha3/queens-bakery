@@ -32,12 +32,12 @@ export default function DeliveryAreas() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           
           {/* Left Column: Sri Lanka Interactive Vector Map Card */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl bg-card border border-border/80 shadow-lg relative group">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 sm:p-8 rounded-none bg-card border border-border/80 shadow-lg relative group">
             <div className="w-full flex items-center justify-between mb-4 border-b border-border/60 pb-3">
               <span className="text-xs font-bold text-foreground font-serif tracking-wider uppercase">
                 🇱🇰 Sri Lanka Coverage Map
               </span>
-              <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-none">
                 Active Zone
               </span>
             </div>
@@ -105,7 +105,7 @@ export default function DeliveryAreas() {
             </div>
 
             {/* Note banner */}
-            <div className="mt-4 w-full rounded-2xl border border-primary/20 bg-accent/30 p-4 text-xs leading-relaxed text-foreground/90">
+            <div className="mt-4 w-full rounded-none border border-primary/20 bg-accent/30 p-4 text-xs leading-relaxed text-foreground/90">
               <div className="flex gap-3 items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-primary flex-shrink-0 mt-0.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12v-.008z" />
@@ -123,10 +123,10 @@ export default function DeliveryAreas() {
               {locations.map((loc) => (
                 <div
                   key={loc}
-                  className="flex flex-col items-center justify-center p-6 rounded-2xl md:rounded-3xl bg-card border border-border/80 shadow-md hover:border-primary/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
+                  className="flex flex-col items-center justify-center p-6 rounded-none bg-card border border-border/80 shadow-md hover:border-primary/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1"
                 >
                   {/* Pin Icon */}
-                  <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-3 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-none bg-primary/10 text-primary mb-3 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />

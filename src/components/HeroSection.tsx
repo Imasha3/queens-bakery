@@ -64,20 +64,20 @@ export default function HeroSection() {
 
           {/* Hero image showcase */}
           <div className="lg:col-span-6 flex justify-center w-full relative">
-            <div className="relative w-full max-w-lg lg:max-w-none aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-card/90 dark:border-card/30 transition-all duration-500 group">
+            <div className="relative w-full max-w-lg lg:max-w-none aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/5] rounded-none overflow-hidden shadow-2xl border-4 border-card/90 dark:border-card/30 transition-all duration-500 group">
               {/* Overlay styling for premium feel */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-50 group-hover:opacity-30 transition-opacity duration-300 z-10" />
               
               <img
                 src="/hero-bakery.jpg"
                 alt="Queen's Bakery Desserts Showcase"
-                className="h-full w-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-700"
+                className="h-full w-full object-cover transform scale-105 group-hover:scale-100 transition-transform duration-700 rounded-none"
                 loading="eager"
               />
 
               {/* Decorative Glass Badge 1 - Bottom Left */}
-              <div className="absolute bottom-4 left-4 right-4 sm:right-auto z-20 flex items-center gap-3 rounded-2xl bg-background/80 backdrop-blur-md p-3.5 border border-white/20 shadow-lg text-left">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground font-serif font-bold text-lg">
+              <div className="absolute bottom-4 left-4 right-4 sm:right-auto z-20 flex items-center gap-3 rounded-none bg-background/80 backdrop-blur-md p-3.5 border border-white/20 shadow-lg text-left">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-primary text-primary-foreground font-serif font-bold text-lg">
                   🎂
                 </div>
                 <div>
