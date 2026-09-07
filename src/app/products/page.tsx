@@ -92,30 +92,30 @@ function ProductsContent() {
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-grow py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+      <main className="flex-grow py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
               Our Products
             </h1>
-            <p className="text-sm font-light text-muted-foreground leading-relaxed">
-              Browse our creations and select the items you are interested in. Prices and availability are provided upon inquiry.
+            <p className="text-xs sm:text-sm font-light text-muted-foreground leading-relaxed">
+              Browse our creations and select the items you are interested in. Prices and availability are provided upon inquiry request.
             </p>
             <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />
           </div>
 
-          {/* Filters & Search Controls */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card border border-border/80 p-6 rounded-2xl shadow-sm">
-            {/* Search Input */}
+          {/* Filters & Search Controls - Clean, moderately rounded-xl container */}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-card border border-border/80 p-5 rounded-xl shadow-xs">
+            {/* Search Input - rounded-lg */}
             <div className="relative w-full md:max-w-xs">
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background px-4 py-3 pl-10 text-xs text-foreground focus:outline-none focus:border-primary/60 transition-colors"
+                className="w-full rounded-lg border border-border/80 bg-background px-4 py-2.5 pl-9 text-xs text-foreground focus:outline-none focus:border-primary/60 transition-colors"
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -123,13 +123,13 @@ function ProductsContent() {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground"
+                className="absolute left-3 top-3 w-4 h-4 text-muted-foreground"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
               </svg>
             </div>
 
-            {/* Category Pills */}
+            {/* Category Filters - rounded-lg buttons */}
             <div className="flex flex-wrap gap-2 w-full md:w-auto justify-start md:justify-end">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat;
@@ -137,10 +137,10 @@ function ProductsContent() {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide border transition-all duration-200 ${
+                    className={`rounded-lg px-3.5 py-2 text-xs font-semibold tracking-wide border transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                        : 'bg-background hover:bg-accent border-border text-muted-foreground hover:text-foreground'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                        : 'bg-background hover:bg-accent/40 border-border/80 text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {cat}
@@ -152,14 +152,14 @@ function ProductsContent() {
 
           {/* Products Grid / Loading State / Empty State */}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-border/80">
+            <div className="flex flex-col items-center justify-center py-20 bg-card rounded-xl border border-border/80">
               <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mb-3" />
               <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
                 Loading Bakes...
               </span>
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-20 bg-card rounded-3xl border border-dashed border-border/80">
+            <div className="text-center py-20 bg-card rounded-xl border border-dashed border-border/80">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
