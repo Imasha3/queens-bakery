@@ -156,12 +156,12 @@ export default function ProductDetailsPage({ params }: PageProps) {
             
             {/* Gallery Column */}
             <div className="lg:col-span-6 space-y-4">
-              <div className="aspect-square w-full rounded-none overflow-hidden bg-accent/20 border border-border/80 shadow-md">
+              <div className="aspect-square w-full rounded-3xl overflow-hidden bg-accent/20 border border-border/80 shadow-xl">
                 {hasMainImg ? (
                   <img
                     src={mainImgSrc}
                     alt={product.name}
-                    className="h-full w-full object-cover transition-all rounded-none"
+                    className="h-full w-full object-cover transition-all rounded-3xl"
                   />
                 ) : (
                   <div className="h-full w-full flex flex-col items-center justify-center bg-accent/30 text-muted-foreground/60 p-4 text-center select-none">

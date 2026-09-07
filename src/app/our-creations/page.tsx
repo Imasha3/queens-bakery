@@ -44,7 +44,7 @@ function GalleryCard({ item, onClick }: GalleryCardProps) {
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative w-full ${item.aspectRatio} overflow-hidden cursor-pointer bg-accent/25 border border-border/80 shadow-sm hover:shadow-lg transition-all duration-300 rounded-none group mb-4`}
+      className={`relative w-full ${item.aspectRatio} overflow-hidden cursor-pointer bg-accent/25 border border-border/80 shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl group mb-4`}
     >
       {/* Dark tint overlay on hover */}
       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-500 z-10" />
@@ -57,7 +57,7 @@ function GalleryCard({ item, onClick }: GalleryCardProps) {
             key={img}
             src={img.trim()}
             alt="Queen's Bakery Creation"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 rounded-none transform scale-100 group-hover:scale-105 ${
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 rounded-2xl transform scale-100 group-hover:scale-105 ${
               isCurrent ? 'opacity-100 z-20' : 'opacity-0 z-0'
             }`}
             loading="lazy"
@@ -195,7 +195,7 @@ export default function OurCreationsPage() {
               <img
                 src={items[activeIdx].images[0].trim()} // Always display primary image in full-screen view
                 alt="Queen's Bakery Creation Large Preview"
-                className="max-w-full max-h-[80vh] object-contain rounded-none border border-white/10 shadow-2xl bg-black"
+                className="max-w-full max-h-[80vh] object-contain rounded-2xl border border-white/10 shadow-2xl bg-black"
               />
             ) : null}
           </div>

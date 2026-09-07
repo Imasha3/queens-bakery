@@ -2221,7 +2221,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {/* Total Inquiries */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-none space-y-4">
+                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
                   <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                     Total Inquiries
                   </span>
@@ -2234,7 +2234,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Pending Inquiries */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-none space-y-4">
+                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
                   <span className="text-[10px] uppercase font-bold text-amber-500 tracking-wider">
                     Pending Inquiries
                   </span>
@@ -2247,7 +2247,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Custom Orders */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-none space-y-4">
+                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
                   <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                     Custom Orders
                   </span>
@@ -2265,7 +2265,7 @@ export default function AdminDashboardPage() {
                     setActiveTab('contacts');
                     setSelectedContactMessage(null);
                   }}
-                  className="bg-slate-900 border border-slate-800 p-6 rounded-none space-y-4 cursor-pointer hover:border-primary/50 transition-colors"
+                  className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 cursor-pointer hover:border-primary/50 transition-colors shadow-sm"
                 >
                   <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
                     Contact Messages
@@ -2282,7 +2282,7 @@ export default function AdminDashboardPage() {
 
               {/* Database Permissions warnings helper */}
               {errorDetails.length > 0 && (
-                <div className="rounded-none bg-amber-500/10 border border-amber-500/20 p-5 space-y-3">
+                <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-5 space-y-3">
                   <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                     ⚠️ Firestore Database Read Notice
                   </h4>

@@ -220,9 +220,9 @@ export default function InquiryModal() {
                         className="flex gap-4 py-3 first:pt-0 last:pb-0 items-start"
                       >
                         {/* Mini image */}
-                        <div className="w-14 h-14 rounded-none overflow-hidden bg-accent/20 flex-shrink-0">
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-accent/20 flex-shrink-0">
                           {typeof item.image === 'string' && item.image.trim() !== '' ? (
-                            <img src={item.image.trim()} alt={item.name} className="w-full h-full object-cover rounded-none" />
+                            <img src={item.image.trim()} alt={item.name} className="w-full h-full object-cover rounded-xl" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-accent/40 text-muted-foreground/60 text-[9px] font-bold uppercase tracking-tighter">
                               QB

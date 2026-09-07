@@ -251,11 +251,11 @@ export default function MyOrdersPage() {
                             <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                               {language === 'en' ? 'Reference Image' : 'නිර්දේශිත ඡායාරූපය'}
                             </h4>
-                            <div className="max-w-xs bg-accent/20 border border-border rounded-none overflow-hidden">
+                            <div className="max-w-xs bg-accent/20 border border-border rounded-xl overflow-hidden">
                               <img
                                 src={order.referenceImage}
                                 alt="Reference Design"
-                                className="w-full h-auto object-cover rounded-none"
+                                className="w-full h-auto object-cover rounded-xl"
                               />
                             </div>
                           </div>
