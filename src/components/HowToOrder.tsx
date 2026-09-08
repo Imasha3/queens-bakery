@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
+import { OrderJourneyIllustration } from '@/components/BakeryIllustrations';
 
 export default function HowToOrder() {
   const { t, language } = useApp();
@@ -76,7 +77,14 @@ export default function HowToOrder() {
 
   return (
     <section className="py-16 md:py-24 bg-accent/30 transition-colors duration-300 relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Decorative background aura SVG elements */}
+      <div className="absolute top-10 right-10 opacity-20 pointer-events-none -z-0">
+        <svg width="240" height="240" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="40" className="stroke-primary" strokeWidth="1" strokeDasharray="4 4" />
+        </svg>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
@@ -94,38 +102,76 @@ export default function HowToOrder() {
           </p>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {steps.map((step, idx) => (
-            <div
-              key={step.num}
-              className="relative flex flex-col items-center text-center p-6 rounded-none bg-card border border-border/80 shadow-md hover:shadow-xl hover:border-primary/50 transition-all duration-300 group hover:-translate-y-1"
-            >
-              {/* Step Connection Line (for desktop) */}
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-14 -right-4 w-8 h-[2px] bg-primary/20 z-10" />
-              )}
+        {/* Balanced Grid: 5 Steps on Left / Large Illustration on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          
+          {/* Left Column: 5 Steps Cards Stack */}
+          <div className="lg:col-span-7 space-y-4">
+            {steps.map((step, idx) => (
+              <div
+                key={step.num}
+                className="relative flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 sm:p-6 rounded-none bg-card border border-border/80 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 group"
+              >
+                {/* Step Number Badge */}
+                <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-none bg-primary/10 text-primary font-serif font-bold text-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  {step.num}
+                </div>
 
-              {/* Number Pill */}
-              <div className="absolute top-4 right-4 rounded-none bg-primary/10 text-primary text-[10px] font-bold px-2.5 py-0.5 border border-primary/20">
-                {step.num}
+                {/* Icon & Title Container */}
+                <div className="flex-grow space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-primary text-sm">{step.icon}</span>
+                    <h3 className="font-serif text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                      {step.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs font-light text-muted-foreground leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+
+                {/* Optional Step Connector Line indicator */}
+                {idx < steps.length - 1 && (
+                  <div className="hidden sm:block absolute left-11 -bottom-4 w-[2px] h-4 bg-primary/20" />
+                )}
               </div>
+            ))}
+          </div>
 
-              {/* Icon Container */}
-              <div className="flex items-center justify-center w-14 h-14 rounded-none bg-primary/10 text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-300 shadow-sm">
-                {step.icon}
-              </div>
-
-              {/* Step Content */}
-              <h3 className="font-serif text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                {step.title}
-              </h3>
+          {/* Right Column: Premium Bakery Order Illustration Card */}
+          <div className="lg:col-span-5 flex flex-col items-center">
+            <div className="w-full bg-card border border-border/80 p-6 sm:p-8 rounded-none shadow-md space-y-6 relative overflow-hidden group">
               
-              <p className="text-xs font-light text-muted-foreground leading-relaxed">
-                {step.desc}
-              </p>
+              {/* Illustration Title Banner */}
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <span className="text-xs font-bold font-serif tracking-wider uppercase text-foreground">
+                  🎂 Order Preparation Journey
+                </span>
+                <span className="text-[10px] font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-none border border-primary/20">
+                  Queen's Bakery
+                </span>
+              </div>
+
+              {/* Vector SVG Illustration */}
+              <div className="w-full max-w-sm mx-auto transition-transform duration-500 group-hover:scale-102">
+                <OrderJourneyIllustration />
+              </div>
+
+              {/* Decorative Quality Badges */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="flex items-center gap-2 p-3 bg-accent/20 border border-border/60 rounded-none text-xs text-foreground/90">
+                  <span className="text-primary font-bold">✓</span>
+                  <span>100% Fresh Daily</span>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-accent/20 border border-border/60 rounded-none text-xs text-foreground/90">
+                  <span className="text-primary font-bold">✓</span>
+                  <span>Handcrafted Bakes</span>
+                </div>
+              </div>
+
             </div>
-          ))}
+          </div>
+
         </div>
 
       </div>
