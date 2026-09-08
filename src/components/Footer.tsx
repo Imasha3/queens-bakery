@@ -29,9 +29,9 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-card border-t border-border mt-auto transition-colors duration-300 relative overflow-hidden">
-      {/* Top Accent Line */}
-      <div className="h-1 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
+    <footer className="bg-card/95 border-t-2 border-primary/20 dark:bg-card/95 mt-auto transition-colors duration-300 relative overflow-hidden shadow-inner">
+      {/* Top Gradient Line */}
+      <div className="h-1 w-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
 
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
@@ -47,7 +47,7 @@ export default function Footer() {
             <div className="pt-2">
               <button
                 onClick={() => setInquiryModalOpen(true)}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2.5 text-xs font-semibold transition-all duration-200"
+                className="inline-flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2.5 text-xs font-semibold transition-all duration-200 rounded-none cursor-pointer"
               >
                 <span>💬</span>
                 <span>{t('hero.requestPrice')}</span>
@@ -60,7 +60,7 @@ export default function Footer() {
             <h4 className="font-serif text-sm font-bold text-foreground tracking-wider uppercase border-b border-border/60 pb-2 inline-block md:block">
               {t('footer.quickLinks')}
             </h4>
-            <ul className="grid grid-cols-2 gap-2 text-xs font-light text-muted-foreground">
+            <ul className="grid grid-cols-2 gap-2 text-xs font-medium text-foreground/80">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -83,7 +83,7 @@ export default function Footer() {
               {deliveryList.map((area) => (
                 <span
                   key={area}
-                  className="text-[11px] font-light bg-accent/40 text-foreground/80 border border-border/60 rounded-lg px-2.5 py-1"
+                  className="text-[11px] font-medium bg-accent/50 text-foreground/90 border border-border/80 rounded-none px-2.5 py-1"
                 >
                   {area}
                 </span>
@@ -100,7 +100,7 @@ export default function Footer() {
               {t('footer.followUs')}
             </h4>
             
-            <div className="flex flex-col gap-2.5 items-center md:items-start text-xs text-muted-foreground">
+            <div className="flex flex-col gap-2.5 items-center md:items-start text-xs font-medium text-foreground/80">
               {socialSettings?.facebook && (
                 <a
                   href={socialSettings.facebook}

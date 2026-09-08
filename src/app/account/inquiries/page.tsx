@@ -33,8 +33,8 @@ interface Inquiry {
   notes: string;
   requestedDate: string;
   deliveryLocation: string;
-  status: "pending" | "reviewing" | "quoted" | "confirmed" | "completed" | "cancelled";
-  createdAt: any; // Firestore Timestamp
+  status: "pending" | "reviewing" | "quoted" | "confirmed" | "completed" | "cancelled" | string;
+  createdAt: any;
   quotedPrice?: string | null;
   availability?: string | null;
   adminMessage?: string | null;
@@ -42,7 +42,7 @@ interface Inquiry {
 }
 
 export default function MyInquiriesPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { language } = useApp();
   const router = useRouter();
 
@@ -57,9 +57,11 @@ export default function MyInquiriesPage() {
     }
   }, [user, authLoading, router]);
 
-  // Fetch inquiries
+  // Fetch customer inquiries with automatic background refresh
   useEffect(() => {
-    if (!user) return;
+    if (!user?.uid) return;
+
+    let active = true;
 
     const fetchInquiries = async () => {
       try {
@@ -70,52 +72,64 @@ export default function MyInquiriesPage() {
         const querySnapshot = await getDocs(q);
         const fetchedInquiries: Inquiry[] = [];
         
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach((docSnap) => {
           fetchedInquiries.push({
-            id: doc.id,
-            ...doc.data()
+            id: docSnap.id,
+            ...docSnap.data()
           } as Inquiry);
         });
 
-        // Sort inquiries by creation time client-side to prevent Firestore Index requirement errors
+        // Sort by creation time descending
         fetchedInquiries.sort((a, b) => {
-          const timeA = a.createdAt?.seconds || 0;
-          const timeB = b.createdAt?.seconds || 0;
-          return timeB - timeA; // Descending
+          const timeA = a.createdAt?.seconds || a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.seconds || b.createdAt?.toMillis?.() || 0;
+          return timeB - timeA;
         });
 
-        setInquiries(fetchedInquiries);
+        if (active) {
+          setInquiries(fetchedInquiries);
+          setLoading(false);
+        }
       } catch (err: any) {
         console.error("Error fetching inquiries:", err);
-        setError(
-          language === 'en'
-            ? "Unable to retrieve your inquiries. Please try again later."
-            : "ඔබගේ විමසීම් ලබා ගැනීමට නොහැකි විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
-        );
-      } finally {
-        setLoading(false);
+        if (active) {
+          setError(
+            language === 'en'
+              ? "Unable to retrieve your inquiries. Please try again later."
+              : "ඔබගේ විමසීම් ලබා ගැනීමට නොහැකි විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
+          );
+          setLoading(false);
+        }
       }
     };
 
     fetchInquiries();
-  }, [user, language]);
+    const intervalId = setInterval(fetchInquiries, 8000);
+
+    return () => {
+      active = false;
+      clearInterval(intervalId);
+    };
+  }, [user?.uid, language]);
 
   const getStatusBadgeStyles = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'pending':
-        return 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800/50';
+        return 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700/60';
       case 'reviewing':
-        return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50';
+      case 'under_review':
+        return 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-700/60';
       case 'quoted':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/50';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60';
       case 'confirmed':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800/50';
+        return 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-700/60';
       case 'completed':
-        return 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800/40 dark:text-slate-300 dark:border-slate-700/50';
+        return 'bg-slate-200 text-slate-900 border-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700';
       case 'cancelled':
-        return 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800/50';
+      case 'declined':
+        return 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-700/60';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -135,7 +149,7 @@ export default function MyInquiriesPage() {
     return (
       <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
         <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center">
+        <main className="flex-grow flex flex-col items-center justify-center py-24">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
@@ -157,7 +171,7 @@ export default function MyInquiriesPage() {
       <main className="flex-grow py-12">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8">
           
-          {/* Header & Back Link */}
+          {/* Header & Customer Name */}
           <div className="space-y-4">
             <Link
               href="/account"
@@ -166,15 +180,15 @@ export default function MyInquiriesPage() {
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
               </svg>
-              {language === 'en' ? 'Back to Dashboard' : 'නැවත ගිණුම් පිටුවට'}
+              {language === 'en' ? 'Back to Account' : 'නැවත ගිණුම් පිටුවට'}
             </Link>
             
             <div className="space-y-2">
               <span className="text-xs font-semibold text-primary tracking-widest uppercase">
-                {language === 'en' ? 'Price & Availability Requests' : 'මිල ගණන් සහ තිබේදැයි විමසීම්'}
+                {profile?.fullName || user.displayName ? `Account of ${profile?.fullName || user.displayName}` : 'Customer Inquiries'}
               </span>
               <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-                {language === 'en' ? 'My Inquiries' : 'මගේ විමසීම්'}
+                {language === 'en' ? 'My Inquiries & Price Quotes' : 'මගේ විමසීම් සහ මිල ගණන්'}
               </h1>
               <div className="h-1 w-12 bg-primary rounded-full mt-2" />
             </div>
@@ -182,29 +196,29 @@ export default function MyInquiriesPage() {
 
           {/* Main Error */}
           {error && (
-            <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 text-xs font-semibold text-primary text-center">
+            <div className="rounded-none bg-primary/10 border border-primary/20 p-4 text-xs font-semibold text-primary text-center">
               ⚠️ {error}
             </div>
           )}
 
           {/* List inquiries */}
           {inquiries.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border p-12 text-center space-y-4 bg-card">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 text-muted-foreground mx-auto">
+            <div className="rounded-none border border-dashed border-border p-12 text-center space-y-4 bg-card">
+              <div className="flex items-center justify-center w-16 h-16 rounded-none bg-accent/20 text-muted-foreground mx-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
               </div>
               <h3 className="font-serif text-lg font-bold text-foreground">
-                {language === 'en' ? "No Inquiries Yet" : "තවමත් විමසීම් කිසිවක් නැත"}
+                {language === 'en' ? "No Inquiries Submitted Yet" : "තවමත් විමසීම් කිසිවක් නැත"}
               </h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
                 {language === 'en' 
-                  ? "Select delicious bakes from our store, add them to your inquiry cart, and request quotation prices." 
-                  : "අපගේ වෙළඳසැලෙන් රසවත් නිෂ්පාදන තෝරාගෙන මිල ගණන් ඉල්ලුම් කරන්න."}
+                  ? "Select bakes from our products catalog, add them to your inquiry cart, and receive price quotes directly." 
+                  : "අපගේ නිෂ්පාදන පරීක්ෂා කර මිල ගණන් ලබා ගන්න."}
               </p>
-              <Link href="/products" className="inline-block rounded-xl bg-primary text-primary-foreground px-6 py-3 text-xs font-semibold hover:opacity-95 shadow-md">
-                {language === 'en' ? "Browse Products" : "නිෂ්පාදන පරීක්ෂා කරන්න"}
+              <Link href="/products" className="inline-block rounded-none bg-primary text-primary-foreground px-6 py-3 text-xs font-semibold hover:opacity-95 shadow-md">
+                {language === 'en' ? "Browse Bakery Products" : "නිෂ්පාදන පරීක්ෂා කරන්න"}
               </Link>
             </div>
           ) : (
@@ -212,10 +226,10 @@ export default function MyInquiriesPage() {
               {inquiries.map((inquiry) => (
                 <div
                   key={inquiry.id}
-                  className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden"
+                  className="bg-card border border-border/90 rounded-none shadow-md overflow-hidden"
                 >
                   {/* Card Header details */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-accent/25 border-b border-border/60 gap-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-accent/30 border-b border-border/60 gap-4">
                     <div>
                       <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                         {language === 'en' ? 'Submitted On' : 'ඉදිරිපත් කළ දිනය'}
@@ -236,8 +250,8 @@ export default function MyInquiriesPage() {
                       </div>
                       
                       {/* Status badge */}
-                      <span className={`inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase rounded-full border ${getStatusBadgeStyles(inquiry.status)}`}>
-                        {inquiry.status}
+                      <span className={`inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase rounded-none border ${getStatusBadgeStyles(inquiry.status)}`}>
+                        {inquiry.status ? inquiry.status.replace('_', ' ') : 'PENDING'}
                       </span>
                     </div>
                   </div>
@@ -257,12 +271,12 @@ export default function MyInquiriesPage() {
                             className="flex gap-4 py-3 first:pt-0 last:pb-0 items-start"
                           >
                             {/* Product Square Image */}
-                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-accent/20 flex-shrink-0 border border-border">
+                            <div className="w-14 h-14 rounded-none overflow-hidden bg-accent/20 flex-shrink-0 border border-border">
                               {typeof item.image === 'string' && item.image.trim() !== '' ? (
                                 <img
                                   src={item.image.trim()}
                                   alt={item.name}
-                                  className="w-full h-full object-cover rounded-xl"
+                                  className="w-full h-full object-cover rounded-none"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-accent/40 text-muted-foreground/60 text-[9px] font-bold uppercase tracking-tighter">
@@ -289,22 +303,22 @@ export default function MyInquiriesPage() {
                               {(item.size || item.flavour || item.message || item.style) && (
                                 <div className="flex flex-wrap gap-x-3 gap-y-1 pt-1">
                                   {item.size && (
-                                    <span className="text-[10px] bg-accent px-2 py-0.5 rounded text-foreground font-medium">
+                                    <span className="text-[10px] bg-accent/60 px-2 py-0.5 rounded-none text-foreground font-medium border border-border/40">
                                       Size: {item.size}
                                     </span>
                                   )}
                                   {item.flavour && (
-                                    <span className="text-[10px] bg-accent px-2 py-0.5 rounded text-foreground font-medium">
+                                    <span className="text-[10px] bg-accent/60 px-2 py-0.5 rounded-none text-foreground font-medium border border-border/40">
                                       Flavour: {item.flavour}
                                     </span>
                                   )}
                                   {item.style && (
-                                    <span className="text-[10px] bg-accent px-2 py-0.5 rounded text-foreground font-medium">
+                                    <span className="text-[10px] bg-accent/60 px-2 py-0.5 rounded-none text-foreground font-medium border border-border/40">
                                       Style: {item.style}
                                     </span>
                                   )}
                                   {item.message && (
-                                    <span className="text-[10px] border border-border px-2 py-0.5 rounded text-muted-foreground block w-full italic">
+                                    <span className="text-[10px] border border-border px-2 py-0.5 rounded-none text-muted-foreground block w-full italic">
                                       "{item.message}"
                                     </span>
                                   )}
@@ -329,7 +343,7 @@ export default function MyInquiriesPage() {
 
                       <div className="space-y-1">
                         <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                          Contact Details
+                          Contact Info
                         </span>
                         <span className="text-xs font-medium text-foreground block">
                           Phone: {inquiry.mobile}
@@ -344,9 +358,9 @@ export default function MyInquiriesPage() {
                       {inquiry.notes && (
                         <div className="sm:col-span-2 space-y-1">
                           <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                            {language === 'en' ? 'Additional Notes' : 'අමතර සටහන්'}
+                            {language === 'en' ? 'Additional Customer Notes' : 'අමතර සටහන්'}
                           </span>
-                          <p className="text-xs font-light text-foreground bg-accent/10 p-3 rounded-2xl border border-border/40 leading-relaxed whitespace-pre-wrap">
+                          <p className="text-xs font-light text-foreground bg-accent/10 p-3 rounded-none border border-border/40 leading-relaxed whitespace-pre-wrap">
                             {inquiry.notes}
                           </p>
                         </div>
@@ -356,18 +370,18 @@ export default function MyInquiriesPage() {
                     {/* Admin Response Section */}
                     <div className="pt-4 border-t border-border/40 mt-4 space-y-3">
                       <span className="text-[10px] text-primary uppercase font-bold block tracking-wider font-semibold">
-                        {language === 'en' ? "Bakery Response" : "ක්වීන්ස් බේකරි පිළිතුර"}
+                        {language === 'en' ? "Bakery Response & Quoted Price" : "ක්වීන්ස් බේකරි පිළිතුර"}
                       </span>
                       
-                      {inquiry.respondedAt ? (
-                        <div className="bg-primary/5 border border-primary/10 p-4 rounded-2xl space-y-3">
+                      {inquiry.respondedAt || inquiry.quotedPrice || inquiry.adminMessage ? (
+                        <div className="bg-primary/5 border border-primary/20 p-4 rounded-none space-y-3">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                                 {language === 'en' ? "Quoted Price" : "ලබාදුන් මිල"}
                               </span>
-                              <span className="text-sm font-serif font-semibold text-primary">
-                                {inquiry.quotedPrice || 'N/A'}
+                              <span className="text-sm font-serif font-bold text-primary">
+                                {inquiry.quotedPrice || 'Pending Quote'}
                               </span>
                             </div>
                             
@@ -376,7 +390,7 @@ export default function MyInquiriesPage() {
                                 {language === 'en' ? "Availability" : "ලබාගත හැකි බව"}
                               </span>
                               <span className="text-xs font-semibold text-foreground">
-                                {inquiry.availability || 'N/A'}
+                                {inquiry.availability || 'Available'}
                               </span>
                             </div>
 
@@ -393,7 +407,7 @@ export default function MyInquiriesPage() {
                           {inquiry.adminMessage && (
                             <div className="space-y-1 pt-2 border-t border-border/40">
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                                {language === 'en' ? "Message from Bakery" : "බේකරියෙන් පණිවිඩය"}
+                                {language === 'en' ? "Message from Bakery Staff" : "බේකරියෙන් පණිවිඩය"}
                               </span>
                               <p className="text-xs font-light text-foreground leading-relaxed whitespace-pre-wrap">
                                 {inquiry.adminMessage}
@@ -402,9 +416,9 @@ export default function MyInquiriesPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="bg-accent/10 border border-border/40 p-4 rounded-2xl text-center">
+                        <div className="bg-accent/10 border border-border/40 p-4 rounded-none text-center">
                           <span className="text-xs text-muted-foreground font-light block">
-                            ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
+                            ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery team" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
                           </span>
                         </div>
                       )}

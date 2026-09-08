@@ -60,9 +60,17 @@ service cloud.firestore {
 
     // Customer Communication Reply logs (Immutable communication history)
     match /replyLogs/{replyId} {
-      allow read: if isActiveAdmin();
+      allow read: if isActiveAdmin() || (request.auth != null && (resource.data.customerId == request.auth.uid || resource.data.userId == request.auth.uid));
       allow create: if isActiveAdmin();
       allow update, delete: if false;
+    }
+
+    // Customer Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isActiveAdmin());
+      allow create: if isActiveAdmin();
+      allow update: if request.auth != null && (resource.data.userId == request.auth.uid || isActiveAdmin());
+      allow delete: if isActiveAdmin();
     }
 
     // Settings collection (Social media links, site config)

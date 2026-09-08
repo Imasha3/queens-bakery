@@ -12,6 +12,7 @@ import { useApp } from '@/context/AppContext';
 import { fetchStaffAccounts, createStaffAccount, updateStaffAccount, toggleStaffStatus, deleteStaffAccount, sendStaffPasswordReset } from '@/lib/staff';
 import { StaffRole, AdminPermissions, AdminProfile, SUPER_ADMIN_PERMISSIONS, getDefaultPermissionsForRole, getRoleLabel } from '@/lib/permissions';
 import { createAuditLog, logAuditAction, logCustomerReply, fetchAuditLogs, fetchReplyHistoryForRecord, AuditLog, CustomerReplyLog } from '@/lib/audit';
+import { createCustomerNotification } from '@/lib/notifications';
 
 interface SummaryStats {
   totalInquiries: number | string;
@@ -169,6 +170,34 @@ export default function AdminDashboardPage() {
       };
 
       await updateDoc(docRef, updateData);
+
+      // Trigger customer notification
+      if (selectedCustomOrder.userId) {
+        const titleStr = customOrderStatus === 'confirmed'
+          ? '🎉 Custom Order Confirmed!'
+          : customOrderStatus === 'preparing'
+          ? '👨‍🍳 Your Order is Being Prepared!'
+          : customOrderStatus === 'ready'
+          ? '🎂 Your Order is Ready!'
+          : customOrderStatus === 'completed'
+          ? '✅ Custom Order Completed'
+          : customOrderStatus === 'cancelled'
+          ? 'Notice: Custom Order Cancelled'
+          : `Custom Order Status: ${customOrderStatus.replace('_', ' ').toUpperCase()}`;
+
+        const msgStr = customOrderAdminMessage.trim()
+          ? (customOrderQuotedPrice ? `Quote LKR ${Number(customOrderQuotedPrice).toLocaleString()}: ${customOrderAdminMessage.trim()}` : customOrderAdminMessage.trim())
+          : `Your order status has been updated to ${customOrderStatus.replace('_', ' ')}.`;
+
+        await createCustomerNotification({
+          userId: selectedCustomOrder.userId,
+          title: titleStr,
+          message: msgStr,
+          targetType: 'customOrders',
+          targetId: selectedCustomOrder.id,
+          status: customOrderStatus,
+        });
+      }
 
       if (customOrderAdminMessage.trim() || customOrderQuotedPrice) {
         await logCustomerReply({
@@ -1780,6 +1809,30 @@ export default function AdminDashboardPage() {
       };
 
       await updateDoc(docRef, updateData);
+
+      // Trigger customer notification
+      if (selectedInquiry.userId) {
+        const titleStr = inquiryStatus === 'confirmed'
+          ? '🎉 Inquiry Confirmed by Bakery!'
+          : inquiryStatus === 'declined' || inquiryStatus === 'cancelled'
+          ? 'Inquiry Status: Closed / Declined'
+          : quotedPrice
+          ? `🎂 Price Quote: LKR ${Number(quotedPrice).toLocaleString()}`
+          : `Inquiry Status: ${inquiryStatus.replace('_', ' ').toUpperCase()}`;
+
+        const msgStr = adminMessage.trim()
+          ? (quotedPrice ? `Quote LKR ${Number(quotedPrice).toLocaleString()}: ${adminMessage.trim()}` : adminMessage.trim())
+          : `Your inquiry status has been updated to ${inquiryStatus.replace('_', ' ')}.`;
+
+        await createCustomerNotification({
+          userId: selectedInquiry.userId,
+          title: titleStr,
+          message: msgStr,
+          targetType: 'inquiries',
+          targetId: selectedInquiry.id,
+          status: inquiryStatus,
+        });
+      }
 
       if (adminMessage.trim() || quotedPrice) {
         await logCustomerReply({

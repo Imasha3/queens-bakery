@@ -22,16 +22,16 @@ interface CustomOrder {
   requestedDate: string;
   deliveryLocation: string;
   referenceImage?: string | null;
-  status: "pending" | "reviewing" | "accepted" | "in progress" | "completed" | "rejected";
+  status: "pending" | "reviewing" | "accepted" | "in progress" | "completed" | "rejected" | string;
   quotedPrice?: string | null;
   adminMessage?: string | null;
-  createdAt: any; // Firestore Timestamp
+  createdAt: any;
   updatedAt?: any;
   respondedAt?: any;
 }
 
 export default function MyOrdersPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const { language } = useApp();
   const router = useRouter();
 
@@ -46,9 +46,11 @@ export default function MyOrdersPage() {
     }
   }, [user, authLoading, router]);
 
-  // Fetch custom orders
+  // Fetch custom orders with automatic background refresh
   useEffect(() => {
-    if (!user) return;
+    if (!user?.uid) return;
+
+    let active = true;
 
     const fetchOrders = async () => {
       try {
@@ -59,52 +61,67 @@ export default function MyOrdersPage() {
         const querySnapshot = await getDocs(q);
         const fetchedOrders: CustomOrder[] = [];
         
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach((docSnap) => {
           fetchedOrders.push({
-            id: doc.id,
-            ...doc.data()
+            id: docSnap.id,
+            ...docSnap.data()
           } as CustomOrder);
         });
 
-        // Sort custom orders client-side by creation time to avoid Index requirement errors
+        // Sort custom orders descending
         fetchedOrders.sort((a, b) => {
-          const timeA = a.createdAt?.seconds || 0;
-          const timeB = b.createdAt?.seconds || 0;
-          return timeB - timeA; // Descending
+          const timeA = a.createdAt?.seconds || a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.seconds || b.createdAt?.toMillis?.() || 0;
+          return timeB - timeA;
         });
 
-        setOrders(fetchedOrders);
+        if (active) {
+          setOrders(fetchedOrders);
+          setLoading(false);
+        }
       } catch (err: any) {
         console.error("Error fetching custom orders:", err);
-        setError(
-          language === 'en'
-            ? "Unable to retrieve your custom orders. Please try again later."
-            : "ඔබගේ විශේෂ ඇණවුම් ලබා ගැනීමට නොහැකි විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
-        );
-      } finally {
-        setLoading(false);
+        if (active) {
+          setError(
+            language === 'en'
+              ? "Unable to retrieve your custom orders. Please try again later."
+              : "ඔබගේ විශේෂ ඇණවුම් ලබා ගැනීමට නොහැකි විය. කරුණාකර පසුව නැවත උත්සාහ කරන්න."
+          );
+          setLoading(false);
+        }
       }
     };
 
     fetchOrders();
-  }, [user, language]);
+    const intervalId = setInterval(fetchOrders, 8000);
+
+    return () => {
+      active = false;
+      clearInterval(intervalId);
+    };
+  }, [user?.uid, language]);
 
   const getStatusBadgeStyles = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'pending':
-        return 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800/50';
+        return 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700/60';
       case 'reviewing':
-        return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50';
+      case 'under_review':
+        return 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-700/60';
       case 'accepted':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/50';
+      case 'confirmed':
+        return 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60';
       case 'in progress':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800/50';
+      case 'preparing':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-700/60';
       case 'completed':
-        return 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800/40 dark:text-slate-300 dark:border-slate-700/50';
+      case 'ready':
+        return 'bg-slate-200 text-slate-900 border-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700';
       case 'rejected':
-        return 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800/50';
+      case 'cancelled':
+        return 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-700/60';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -124,7 +141,7 @@ export default function MyOrdersPage() {
     return (
       <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
         <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center">
+        <main className="flex-grow flex flex-col items-center justify-center py-24">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
@@ -155,12 +172,12 @@ export default function MyOrdersPage() {
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
               </svg>
-              {language === 'en' ? 'Back to Dashboard' : 'නැවත ගිණුම් පිටුවට'}
+              {language === 'en' ? 'Back to Account' : 'නැවත ගිණුම් පිටුවට'}
             </Link>
             
             <div className="space-y-2">
               <span className="text-xs font-semibold text-primary tracking-widest uppercase">
-                {language === 'en' ? 'Bespoke Order Customizations' : 'විශේෂ ඇණවුම් විස්තර'}
+                {profile?.fullName || user.displayName ? `Orders of ${profile?.fullName || user.displayName}` : 'Custom Orders'}
               </span>
               <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                 {language === 'en' ? 'My Custom Orders' : 'මගේ විශේෂ ඇණවුම්'}
@@ -171,28 +188,28 @@ export default function MyOrdersPage() {
 
           {/* Main Error */}
           {error && (
-            <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 text-xs font-semibold text-primary text-center">
+            <div className="rounded-none bg-primary/10 border border-primary/20 p-4 text-xs font-semibold text-primary text-center">
               ⚠️ {error}
             </div>
           )}
 
           {/* List custom orders */}
           {orders.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border p-12 text-center space-y-4 bg-card">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-accent/20 text-muted-foreground mx-auto">
+            <div className="rounded-none border border-dashed border-border p-12 text-center space-y-4 bg-card">
+              <div className="flex items-center justify-center w-16 h-16 rounded-none bg-accent/20 text-muted-foreground mx-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m12-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <h3 className="font-serif text-lg font-bold text-foreground">
-                {language === 'en' ? "No Custom Orders Yet" : "තවමත් විශේෂ ඇණවුම් කිසිවක් නැත"}
+                {language === 'en' ? "No Custom Orders Submitted Yet" : "තවමත් විශේෂ ඇණවුම් කිසිවක් නැත"}
               </h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
                 {language === 'en' 
-                  ? "Looking for something unique? Request bespoke cake designs, parties package themes, or flower arrangements." 
-                  : "ඔබටම අනන්‍ය වූ කේක් මෝස්තර හෝ වෙනත් විශේෂිත දේ අප වෙතින් ඇණවුම් කරන්න."}
+                  ? "Request bespoke cake designs, celebration gateaux, or flower arrangements." 
+                  : "ඔබටම අනන්‍ය වූ කේක් මෝස්තර අප වෙතින් ඇණවුම් කරන්න."}
               </p>
-              <Link href="/custom-orders" className="inline-block rounded-xl bg-primary text-primary-foreground px-6 py-3 text-xs font-semibold hover:opacity-95 shadow-md">
+              <Link href="/custom-orders" className="inline-block rounded-none bg-primary text-primary-foreground px-6 py-3 text-xs font-semibold hover:opacity-95 shadow-md">
                 {language === 'en' ? "Request Custom Order" : "විශේෂ ඇණවුමක් ඉල්ලන්න"}
               </Link>
             </div>
@@ -201,10 +218,10 @@ export default function MyOrdersPage() {
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden"
+                  className="bg-card border border-border/90 rounded-none shadow-md overflow-hidden"
                 >
                   {/* Card Header details */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-accent/25 border-b border-border/60 gap-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 bg-accent/30 border-b border-border/60 gap-4">
                     <div>
                       <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                         {language === 'en' ? 'Submitted On' : 'ඉදිරිපත් කළ දිනය'}
@@ -225,8 +242,8 @@ export default function MyOrdersPage() {
                       </div>
                       
                       {/* Status badge */}
-                      <span className={`inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase rounded-full border ${getStatusBadgeStyles(order.status)}`}>
-                        {order.status}
+                      <span className={`inline-flex items-center px-3 py-1 text-[10px] font-bold uppercase rounded-none border ${getStatusBadgeStyles(order.status)}`}>
+                        {order.status ? order.status.replace('_', ' ') : 'PENDING'}
                       </span>
                     </div>
                   </div>
@@ -241,7 +258,7 @@ export default function MyOrdersPage() {
                           <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                             {language === 'en' ? 'Design Requirements' : 'නිර්මාණ අවශ්‍යතා'}
                           </h4>
-                          <p className="text-xs font-light text-foreground bg-accent/5 p-4 border border-border/60 rounded-2xl leading-relaxed whitespace-pre-wrap">
+                          <p className="text-xs font-light text-foreground bg-accent/10 p-4 border border-border/60 rounded-none leading-relaxed whitespace-pre-wrap">
                             {order.requirements || order.notes || (order as any).details || 'No description provided.'}
                           </p>
                         </div>
@@ -251,11 +268,11 @@ export default function MyOrdersPage() {
                             <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                               {language === 'en' ? 'Reference Image' : 'නිර්දේශිත ඡායාරූපය'}
                             </h4>
-                            <div className="max-w-xs bg-accent/20 border border-border rounded-xl overflow-hidden">
+                            <div className="max-w-xs bg-accent/20 border border-border rounded-none overflow-hidden">
                               <img
                                 src={order.referenceImage}
                                 alt="Reference Design"
-                                className="w-full h-auto object-cover rounded-xl"
+                                className="w-full h-auto object-cover rounded-none"
                               />
                             </div>
                           </div>
@@ -275,7 +292,7 @@ export default function MyOrdersPage() {
 
                         <div className="space-y-1">
                           <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                            Contact Details
+                            Contact Info
                           </span>
                           <span className="text-xs font-medium text-foreground block">
                             Phone: {order.mobile || (order as any).phone || 'N/A'}
@@ -293,18 +310,18 @@ export default function MyOrdersPage() {
                     {/* Admin Response Section */}
                     <div className="pt-4 border-t border-border/40 mt-4 space-y-3">
                       <span className="text-[10px] text-primary uppercase font-bold block tracking-wider font-semibold">
-                        {language === 'en' ? "Bakery Response" : "ක්වීන්ස් බේකරි පිළිතුර"}
+                        {language === 'en' ? "Bakery Response & Quoted Price" : "ක්වීන්ස් බේකරි පිළිතුර"}
                       </span>
                       
-                      {order.respondedAt ? (
-                        <div className="bg-primary/5 border border-primary/10 p-4 rounded-2xl space-y-3">
+                      {order.respondedAt || order.quotedPrice || order.adminMessage ? (
+                        <div className="bg-primary/5 border border-primary/20 p-4 rounded-none space-y-3">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                                 {language === 'en' ? "Quoted Price" : "ලබාදුන් මිල"}
                               </span>
-                              <span className="text-sm font-serif font-semibold text-primary">
-                                {order.quotedPrice || 'N/A'}
+                              <span className="text-sm font-serif font-bold text-primary">
+                                {order.quotedPrice || 'Pending Quote'}
                               </span>
                             </div>
 
@@ -321,7 +338,7 @@ export default function MyOrdersPage() {
                           {order.adminMessage && (
                             <div className="space-y-1 pt-2 border-t border-border/40">
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                                {language === 'en' ? "Message from Bakery" : "බේකරියෙන් පණිවිඩය"}
+                                {language === 'en' ? "Message from Bakery Staff" : "බේකරියෙන් පණිවිඩය"}
                               </span>
                               <p className="text-xs font-light text-foreground leading-relaxed whitespace-pre-wrap">
                                 {order.adminMessage}
@@ -330,9 +347,9 @@ export default function MyOrdersPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="bg-accent/10 border border-border/40 p-4 rounded-2xl text-center">
+                        <div className="bg-accent/10 border border-border/40 p-4 rounded-none text-center">
                           <span className="text-xs text-muted-foreground font-light block">
-                            ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
+                            ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery team" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
                           </span>
                         </div>
                       )}
