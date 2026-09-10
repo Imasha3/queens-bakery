@@ -14,6 +14,7 @@ import { StaffRole, AdminPermissions, AdminProfile, SUPER_ADMIN_PERMISSIONS, get
 import { createAuditLog, logAuditAction, logCustomerReply, fetchAuditLogs, fetchReplyHistoryForRecord, AuditLog, CustomerReplyLog } from '@/lib/audit';
 import AdminSidebar, { AdminTab, ADMIN_MENU_ITEMS } from '@/components/AdminSidebar';
 import { createCustomerNotification } from '@/lib/notifications';
+import { CelebrationCakeSVG, CupcakeSVG, ChefHatSVG } from '@/components/BakeryIllustrations';
 
 interface SummaryStats {
   totalInquiries: number | string;
@@ -133,6 +134,28 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
     item: any;
   } | null>(null);
   const [submittingOrderAction, setSubmittingOrderAction] = useState(false);
+
+  // Recent Activities State for Dashboard
+  const [recentActivities, setRecentActivities] = useState<AuditLog[]>([]);
+  const [recentActivitiesLoading, setRecentActivitiesLoading] = useState(false);
+
+  const loadRecentActivities = async () => {
+    setRecentActivitiesLoading(true);
+    try {
+      const logs = await fetchAuditLogs();
+      setRecentActivities(logs.slice(0, 5));
+    } catch (err) {
+      console.error('Error fetching recent activities for dashboard:', err);
+    } finally {
+      setRecentActivitiesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'dashboard' && adminUser && isAdmin) {
+      loadRecentActivities();
+    }
+  }, [activeTab, adminUser, isAdmin]);
 
   // Inquiries State
   const [inquiries, setInquiries] = useState<any[]>([]);
@@ -2021,67 +2044,66 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
   };
 
   // Retrieve stats counts on page load
-  useEffect(() => {
-    if (!adminUser || !isAdmin) return;
-
-    const fetchStats = async () => {
-      const errors: string[] = [];
-      const newStats: SummaryStats = {
-        totalInquiries: 'N/A',
-        pendingInquiries: 'N/A',
-        customOrders: 'N/A',
-        contactMessages: 'N/A'
-      };
-
-      // 1. Fetch Total Inquiries
-      try {
-        const inquiriesSnap = await getDocs(collection(db, 'inquiries'));
-        newStats.totalInquiries = inquiriesSnap.size;
-      } catch (err: any) {
-        console.error('Error reading inquiries collection:', err);
-        newStats.totalInquiries = 'Locked';
-        errors.push('Read permission blocked for collection: "inquiries".');
-      }
-
-      // 2. Fetch Pending Inquiries
-      try {
-        const pendingSnap = await getDocs(
-          query(collection(db, 'inquiries'), where('status', '==', 'pending'))
-        );
-        newStats.pendingInquiries = pendingSnap.size;
-      } catch (err: any) {
-        console.error('Error reading pending inquiries:', err);
-        newStats.pendingInquiries = 'Locked';
-        if (!errors.includes('Read permission blocked for collection: "inquiries".')) {
-          errors.push('Read permission blocked for pending queries inside: "inquiries".');
-        }
-      }
-
-      // 3. Fetch Custom Orders
-      try {
-        const customSnap = await getDocs(collection(db, 'customOrders'));
-        newStats.customOrders = customSnap.size;
-      } catch (err: any) {
-        console.error('Error reading customOrders collection:', err);
-        newStats.customOrders = 'Locked';
-        errors.push('Read permission blocked for collection: "customOrders".');
-      }
-
-      // 4. Fetch Contact Messages
-      try {
-        const contactsSnap = await getDocs(collection(db, 'contacts'));
-        newStats.contactMessages = contactsSnap.size;
-      } catch (err: any) {
-        console.error('Error reading contacts collection:', err);
-        newStats.contactMessages = 'Locked';
-        errors.push('Read permission blocked for collection: "contacts".');
-      }
-
-      setStats(newStats);
-      setErrorDetails(errors);
+  const fetchDashboardStats = async () => {
+    const errors: string[] = [];
+    const newStats: SummaryStats = {
+      totalInquiries: 'N/A',
+      pendingInquiries: 'N/A',
+      customOrders: 'N/A',
+      contactMessages: 'N/A'
     };
 
-    fetchStats();
+    // 1. Fetch Total Inquiries
+    try {
+      const inquiriesSnap = await getDocs(collection(db, 'inquiries'));
+      newStats.totalInquiries = inquiriesSnap.size;
+    } catch (err: any) {
+      console.error('Error reading inquiries collection:', err);
+      newStats.totalInquiries = 'Locked';
+      errors.push('Read permission blocked for collection: "inquiries".');
+    }
+
+    // 2. Fetch Pending Inquiries
+    try {
+      const pendingSnap = await getDocs(
+        query(collection(db, 'inquiries'), where('status', '==', 'pending'))
+      );
+      newStats.pendingInquiries = pendingSnap.size;
+    } catch (err: any) {
+      console.error('Error reading pending inquiries:', err);
+      newStats.pendingInquiries = 'Locked';
+      if (!errors.includes('Read permission blocked for collection: "inquiries".')) {
+        errors.push('Read permission blocked for pending queries inside: "inquiries".');
+      }
+    }
+
+    // 3. Fetch Custom Orders
+    try {
+      const customSnap = await getDocs(collection(db, 'customOrders'));
+      newStats.customOrders = customSnap.size;
+    } catch (err: any) {
+      console.error('Error reading customOrders collection:', err);
+      newStats.customOrders = 'Locked';
+      errors.push('Read permission blocked for collection: "customOrders".');
+    }
+
+    // 4. Fetch Contact Messages
+    try {
+      const contactsSnap = await getDocs(collection(db, 'contacts'));
+      newStats.contactMessages = contactsSnap.size;
+    } catch (err: any) {
+      console.error('Error reading contacts collection:', err);
+      newStats.contactMessages = 'Locked';
+      errors.push('Read permission blocked for collection: "contacts".');
+    }
+
+    setStats(newStats);
+    setErrorDetails(errors);
+  };
+
+  useEffect(() => {
+    if (!adminUser || !isAdmin) return;
+    fetchDashboardStats();
   }, [adminUser, isAdmin]);
 
   const handleLogout = async () => {
@@ -2171,87 +2193,344 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
         <div className="p-4 md:p-8 flex-grow space-y-8 overflow-y-auto max-w-full min-w-0">
           
           {activeTab === 'dashboard' && (
-            <>
-              <div className="space-y-1">
-                <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
-                  Overview Statistics
-                </h1>
-                <p className="text-xs text-slate-400">
-                  Real-time summary counts retrieved directly from Firestore collections
-                </p>
+            <div className="space-y-8 animate-in fade-in duration-300">
+              
+              {/* 1. BAKERY WELCOME HERO SECTION */}
+              <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                {/* Decorative subtle ambient pink/amber light background */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="space-y-3 max-w-2xl relative z-10">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                      👑 Queen's Bakery Console
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      System Active
+                    </span>
+                  </div>
+
+                  <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span>Welcome back, {adminProfile?.name || 'Master Baker'}!</span>
+                    <span className="text-xl">🎂</span>
+                  </h1>
+                  <p className="text-xs md:text-sm text-slate-300 font-light leading-relaxed">
+                    Manage your bakery orders, product catalog, custom celebration bakes, price quotes, and customer requests from one central management portal.
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-slate-400 font-mono">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-slate-500">Role:</span>
+                      <strong className="text-slate-200 uppercase font-bold">{getRoleLabel(adminProfile?.role || 'super_admin')}</strong>
+                    </span>
+                    <span className="hidden sm:inline text-slate-700">•</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-slate-500">Location:</span>
+                      <strong className="text-slate-200 font-bold">Queen's Bakery Negombo</strong>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Hero Illustration */}
+                <div className="flex-shrink-0 relative z-10 flex items-center justify-center p-2 bg-slate-950/50 border border-slate-800/80 rounded-2xl shadow-inner">
+                  <CelebrationCakeSVG className="w-28 h-28 md:w-36 md:h-36 drop-shadow-md" />
+                </div>
               </div>
 
-              {/* Stats grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                {/* Total Inquiries */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
-                  <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                    Total Inquiries
-                  </span>
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-3xl font-bold text-white font-mono">
-                      {stats.totalInquiries}
-                    </span>
-                    <span className="text-xs text-slate-400">In inquiries</span>
-                  </div>
+              {/* 2. OVERVIEW STATISTICS CARDS */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                    <span>📊 Overview Statistics</span>
+                    <span className="text-xs font-normal text-slate-400 font-sans">(Live Firestore Counts)</span>
+                  </h2>
+                  <button
+                    onClick={fetchDashboardStats}
+                    className="text-xs text-primary hover:underline font-semibold flex items-center gap-1"
+                  >
+                    <span>🔄 Refresh Counts</span>
+                  </button>
                 </div>
 
-                {/* Pending Inquiries */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
-                  <span className="text-[10px] uppercase font-bold text-amber-500 tracking-wider">
-                    Pending Inquiries
-                  </span>
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-3xl font-bold text-amber-400 font-mono">
-                      {stats.pendingInquiries}
-                    </span>
-                    <span className="text-xs text-amber-500/80">Require review</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                  
+                  {/* Total Inquiries */}
+                  <div
+                    onClick={() => switchTab('inquiries')}
+                    className="group relative bg-slate-900 border border-slate-800 hover:border-primary/50 p-5 rounded-2xl space-y-3 shadow-md hover:shadow-primary/5 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider">
+                        Total Inquiries
+                      </span>
+                      <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                        📩
+                      </div>
+                    </div>
+                    <div className="flex items-baseline justify-between pt-1">
+                      <span className="text-3xl md:text-4xl font-bold text-white font-mono tracking-tight">
+                        {stats.totalInquiries}
+                      </span>
+                      <span className="text-[10px] text-primary/80 font-bold bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                        Inquiries Catalog
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-light truncate">
+                      Total product price & availability requests
+                    </p>
                   </div>
-                </div>
 
-                {/* Custom Orders */}
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
-                  <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                    Custom Orders
-                  </span>
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-3xl font-bold text-white font-mono">
-                      {stats.customOrders}
-                    </span>
-                    <span className="text-xs text-slate-400">In customOrders</span>
+                  {/* Pending Inquiries */}
+                  <div
+                    onClick={() => switchTab('inquiries')}
+                    className="group relative bg-slate-900 border border-slate-800 hover:border-amber-500/50 p-5 rounded-2xl space-y-3 shadow-md hover:shadow-amber-500/5 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-bold text-amber-400 tracking-wider">
+                        Pending Inquiries
+                      </span>
+                      <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                        ⏳
+                      </div>
+                    </div>
+                    <div className="flex items-baseline justify-between pt-1">
+                      <span className="text-3xl md:text-4xl font-bold text-amber-400 font-mono tracking-tight">
+                        {stats.pendingInquiries}
+                      </span>
+                      <span className="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 animate-pulse">
+                        Requires Action
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-light truncate">
+                      Awaiting price quote response
+                    </p>
                   </div>
-                </div>
 
-                {/* Contact Messages */}
-                <div
-                  onClick={() => {
-                    setActiveTab('contacts');
-                    setSelectedContactMessage(null);
-                  }}
-                  className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 cursor-pointer hover:border-primary/50 transition-colors shadow-sm"
-                >
-                  <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                    Contact Messages
-                  </span>
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-3xl font-bold text-white font-mono">
-                      {stats.contactMessages}
-                    </span>
-                    <span className="text-xs text-slate-400">In contacts</span>
+                  {/* Custom Orders */}
+                  <div
+                    onClick={() => switchTab('customOrders')}
+                    className="group relative bg-slate-900 border border-slate-800 hover:border-indigo-500/50 p-5 rounded-2xl space-y-3 shadow-md hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-bold text-indigo-400 tracking-wider">
+                        Custom Orders
+                      </span>
+                      <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                        🎂
+                      </div>
+                    </div>
+                    <div className="flex items-baseline justify-between pt-1">
+                      <span className="text-3xl md:text-4xl font-bold text-white font-mono tracking-tight">
+                        {stats.customOrders}
+                      </span>
+                      <span className="text-[10px] text-indigo-300 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
+                        Bespoke Bakes
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-light truncate">
+                      Celebration & party order designs
+                    </p>
                   </div>
-                </div>
 
+                  {/* Contact Messages */}
+                  <div
+                    onClick={() => switchTab('contacts')}
+                    className="group relative bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-5 rounded-2xl space-y-3 shadow-md hover:shadow-emerald-500/5 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-bold text-emerald-400 tracking-wider">
+                        Contact Messages
+                      </span>
+                      <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-base group-hover:scale-110 transition-transform">
+                        💬
+                      </div>
+                    </div>
+                    <div className="flex items-baseline justify-between pt-1">
+                      <span className="text-3xl md:text-4xl font-bold text-white font-mono tracking-tight">
+                        {stats.contactMessages}
+                      </span>
+                      <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        Customer Support
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-light truncate">
+                      Direct messages & feedback inquiries
+                    </p>
+                  </div>
+
+                </div>
               </div>
 
-              {/* Database Permissions warnings helper */}
+              {/* 3. QUICK ACTIONS GRID SECTION */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                    <span>⚡ Administrative Quick Actions</span>
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  
+                  {/* Quick Action 1: Add Product */}
+                  <button
+                    onClick={() => {
+                      switchTab('products');
+                      setIsAddingProduct(true);
+                      setIsEditingProduct(false);
+                    }}
+                    className="group flex flex-col items-start p-5 bg-slate-900 border border-slate-800 hover:border-primary/60 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      ➕
+                    </div>
+                    <h3 className="text-xs font-bold text-white group-hover:text-primary transition-colors">
+                      Add New Product
+                    </h3>
+                    <p className="text-[10px] text-slate-400 font-light mt-1 leading-relaxed">
+                      Upload new cakes, pastries & set configs
+                    </p>
+                  </button>
+
+                  {/* Quick Action 2: Manage Categories */}
+                  <button
+                    onClick={() => switchTab('categories')}
+                    className="group flex flex-col items-start p-5 bg-slate-900 border border-slate-800 hover:border-amber-500/60 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg mb-3 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                      🏷️
+                    </div>
+                    <h3 className="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">
+                      Manage Categories
+                    </h3>
+                    <p className="text-[10px] text-slate-400 font-light mt-1 leading-relaxed">
+                      Organize catalog categories & cover art
+                    </p>
+                  </button>
+
+                  {/* Quick Action 3: View Custom Orders */}
+                  <button
+                    onClick={() => switchTab('customOrders')}
+                    className="group flex flex-col items-start p-5 bg-slate-900 border border-slate-800 hover:border-indigo-500/60 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg mb-3 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                      🎂
+                    </div>
+                    <h3 className="text-xs font-bold text-white group-hover:text-indigo-400 transition-colors">
+                      View Custom Orders
+                    </h3>
+                    <p className="text-[10px] text-slate-400 font-light mt-1 leading-relaxed">
+                      Review custom cake requests & reference images
+                    </p>
+                  </button>
+
+                  {/* Quick Action 4: View Inquiries */}
+                  <button
+                    onClick={() => switchTab('inquiries')}
+                    className="group flex flex-col items-start p-5 bg-slate-900 border border-slate-800 hover:border-blue-500/60 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg mb-3 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                      📋
+                    </div>
+                    <h3 className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">
+                      View Customer Inquiries
+                    </h3>
+                    <p className="text-[10px] text-slate-400 font-light mt-1 leading-relaxed">
+                      Send price quotes & confirm delivery dates
+                    </p>
+                  </button>
+
+                  {/* Quick Action 5: Contact Messages */}
+                  <button
+                    onClick={() => switchTab('contacts')}
+                    className="group flex flex-col items-start p-5 bg-slate-900 border border-slate-800 hover:border-emerald-500/60 rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg mb-3 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-colors">
+                      ✉️
+                    </div>
+                    <h3 className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">
+                      Contact Messages
+                    </h3>
+                    <p className="text-[10px] text-slate-400 font-light mt-1 leading-relaxed">
+                      Read & follow up on customer inquiries
+                    </p>
+                  </button>
+
+                </div>
+              </div>
+
+              {/* 4. RECENT SYSTEM ACTIVITY TIMELINE */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                    <span>📜 Recent Administrative Activity</span>
+                  </h2>
+                  <button
+                    onClick={() => switchTab('audit')}
+                    className="text-xs text-primary hover:underline font-semibold"
+                  >
+                    View Full Audit Log →
+                  </button>
+                </div>
+
+                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
+                  {recentActivitiesLoading ? (
+                    <div className="flex items-center justify-center py-8 gap-3 text-slate-400 text-xs">
+                      <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                      <span>Loading recent activity timeline...</span>
+                    </div>
+                  ) : recentActivities.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-slate-500 bg-slate-950 border border-slate-850 rounded-xl">
+                      No recent staff activity recorded yet. System actions will be logged automatically.
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-slate-800">
+                      {recentActivities.map((activity, idx) => (
+                        <div key={activity.id || idx} className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-4">
+                          <div className="w-8 h-8 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                            {activity.category === 'customer_reply'
+                              ? '💬'
+                              : activity.category === 'order_update'
+                              ? '🎂'
+                              : activity.category === 'product_change'
+                              ? '🍰'
+                              : activity.category === 'category_change'
+                              ? '🏷️'
+                              : '⚙️'}
+                          </div>
+                          <div className="flex-grow min-w-0 space-y-1 text-xs">
+                            <div className="flex items-center justify-between gap-4">
+                              <p className="font-semibold text-slate-200 truncate">
+                                {activity.description}
+                              </p>
+                              <span className="text-[10px] text-slate-500 font-mono flex-shrink-0">
+                                {activity.timestamp?.toDate
+                                  ? activity.timestamp.toDate().toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })
+                                  : 'Recently'}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                              <span>By <strong className="text-white">{activity.userName}</strong></span>
+                              <span>•</span>
+                              <span className="uppercase tracking-wider font-mono text-primary/80">{activity.role || 'Staff'}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Database Permissions warnings helper if any */}
               {errorDetails.length > 0 && (
                 <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-5 space-y-3">
                   <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                     ⚠️ Firestore Database Read Notice
                   </h4>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Some statistic lookups were blocked. This is expected because your Firestore Security Rules may not allow admin queries yet. Publish the proposed rules to authorize the admin dashboard.
+                    Some statistic lookups were blocked. This is expected because your Firestore Security Rules may not allow admin queries yet.
                   </p>
                   <ul className="list-disc pl-4 space-y-1">
                     {errorDetails.map((detail, idx) => (
@@ -2263,16 +2542,7 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
                 </div>
               )}
 
-              {/* Guidelines Block */}
-              <div className="border border-slate-800 bg-slate-900/30 p-6 space-y-4">
-                <h3 className="font-serif text-lg font-bold text-white">
-                  Queen's Bakery Administrative Controls
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed max-w-3xl">
-                  This admin area allows baking staff and coordinators to manage price availability requests, customize celebration cake requests, and follow up with Negombo delivery area coordinates. Please use discretion when reading customer profile details.
-                </p>
-              </div>
-            </>
+            </div>
           )}
 
           {activeTab === 'inquiries' && (
