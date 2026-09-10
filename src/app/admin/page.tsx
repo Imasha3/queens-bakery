@@ -76,9 +76,65 @@ export default function AdminDashboardPage() {
     contactMessages: 'Loading...'
   });
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'inquiries' | 'customOrders' | 'products' | 'categories' | 'creations' | 'contacts' | 'settings' | 'staff' | 'audit'>('dashboard');
+  type AdminTab = 'dashboard' | 'inquiries' | 'customOrders' | 'products' | 'categories' | 'creations' | 'contacts' | 'settings' | 'staff' | 'audit';
+
+  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [isAdminMobileMenuOpen, setIsAdminMobileMenuOpen] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string[]>([]);
+
+  // Synchronize URL query param ?tab= with activeTab on mount & popstate
+  useEffect(() => {
+    const handleUrlTabSync = () => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab') as AdminTab | null;
+        const validTabs: AdminTab[] = ['dashboard', 'inquiries', 'customOrders', 'products', 'categories', 'creations', 'contacts', 'settings', 'staff', 'audit'];
+        if (tabParam && validTabs.includes(tabParam)) {
+          setActiveTab(tabParam);
+        }
+      }
+    };
+
+    handleUrlTabSync();
+    window.addEventListener('popstate', handleUrlTabSync);
+    return () => window.removeEventListener('popstate', handleUrlTabSync);
+  }, []);
+
+  const switchTab = (tab: AdminTab) => {
+    setSelectedInquiry(null);
+    setSelectedCustomOrder(null);
+    setSelectedProduct(null);
+    setIsEditingProduct(false);
+    setIsAddingProduct(false);
+    setSelectedCategoryItem(null);
+    setIsEditingCategory(false);
+    setIsAddingCategory(false);
+    if (typeof setSelectedCreation === 'function') setSelectedCreation(null);
+    if (typeof setIsEditingCreation === 'function') setIsEditingCreation(false);
+    if (typeof setIsAddingCreation === 'function') setIsAddingCreation(false);
+    if (typeof setSelectedContactMessage === 'function') setSelectedContactMessage(null);
+    if (typeof setSelectedStaff === 'function') setSelectedStaff(null);
+    if (typeof setIsEditingStaff === 'function') setIsEditingStaff(false);
+    if (typeof setIsAddingStaff === 'function') setIsAddingStaff(false);
+
+    setActiveTab(tab);
+    setIsAdminMobileMenuOpen(false);
+
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.pushState({}, '', url.toString());
+    }
+  };
+
+  // Confirm/Reject Order Modal State
+  const [orderActionModal, setOrderActionModal] = useState<{
+    isOpen: boolean;
+    action: 'confirm' | 'reject';
+    itemType: 'inquiry' | 'customOrder';
+    item: any;
+  } | null>(null);
+  const [submittingOrderAction, setSubmittingOrderAction] = useState(false);
 
   // Inquiries State
   const [inquiries, setInquiries] = useState<any[]>([]);
@@ -255,6 +311,77 @@ export default function AdminDashboardPage() {
       setCustomOrderResponseError('Unable to save response. Please try again.');
     } finally {
       setSubmittingCustomOrderResponse(false);
+    }
+  };
+
+  const executeOrderAction = async () => {
+    if (!orderActionModal || !orderActionModal.item) return;
+    const { action, itemType, item } = orderActionModal;
+    setSubmittingOrderAction(true);
+
+    try {
+      const collectionName = itemType === 'inquiry' ? 'inquiries' : 'customOrders';
+      const targetStatus = action === 'confirm' ? 'confirmed' : 'rejected';
+      const docRef = doc(db, collectionName, item.id);
+
+      const updateData = {
+        status: targetStatus,
+        updatedAt: serverTimestamp(),
+        respondedAt: serverTimestamp(),
+      };
+
+      await updateDoc(docRef, updateData);
+
+      // Customer Notification
+      const recipientId = item.userId;
+      if (recipientId) {
+        const titleStr = action === 'confirm'
+          ? '🎉 Order Confirmed!'
+          : 'Notice: Order Status Update';
+        const msgStr = action === 'confirm'
+          ? "Your order has been confirmed by Queen's Bakery."
+          : "Unfortunately, your order could not be accepted at this time.";
+
+        await createCustomerNotification({
+          userId: recipientId,
+          title: titleStr,
+          message: msgStr,
+          targetType: collectionName,
+          targetId: item.id,
+          status: targetStatus,
+        });
+      }
+
+      // Audit Log
+      const customerName = item.customerName || item.fullName || item.name || 'Customer';
+      await recordAudit(
+        `${action === 'confirm' ? 'Confirmed' : 'Rejected'} ${itemType === 'inquiry' ? 'Inquiry' : 'Custom Order'} for ${customerName}`,
+        'order_update',
+        collectionName,
+        item.id
+      );
+
+      // Refresh list
+      if (itemType === 'inquiry') {
+        await fetchInquiries();
+        if (selectedInquiry?.id === item.id) {
+          setSelectedInquiry((prev: any) => (prev ? { ...prev, status: targetStatus } : null));
+          setInquiryStatus(targetStatus);
+        }
+      } else {
+        await fetchCustomOrders();
+        if (selectedCustomOrder?.id === item.id) {
+          setSelectedCustomOrder((prev: any) => (prev ? { ...prev, status: targetStatus } : null));
+          setCustomOrderStatus(targetStatus);
+        }
+      }
+
+      setOrderActionModal(null);
+    } catch (err: any) {
+      console.error('Error executing order action:', err);
+      alert(`Failed to ${action} order: ${err?.message || 'Unknown error'}`);
+    } finally {
+      setSubmittingOrderAction(false);
     }
   };
 
@@ -2044,10 +2171,7 @@ export default function AdminDashboardPage() {
         <nav className="flex-grow p-4 space-y-1.5 overflow-y-auto">
           {hasPermission('viewDashboard') && (
             <button
-              onClick={() => {
-                setActiveTab('dashboard');
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('dashboard')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 ${
                 activeTab === 'dashboard'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2060,11 +2184,7 @@ export default function AdminDashboardPage() {
           
           {hasPermission('viewInquiries') && (
             <button
-              onClick={() => {
-                setActiveTab('inquiries');
-                setSelectedInquiry(null);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('inquiries')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'inquiries'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2077,11 +2197,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('viewOrders') && (
             <button
-              onClick={() => {
-                setActiveTab('customOrders');
-                setSelectedCustomOrder(null);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('customOrders')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'customOrders'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2094,13 +2210,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('manageProducts') && (
             <button
-              onClick={() => {
-                setActiveTab('products');
-                setSelectedProduct(null);
-                setIsEditingProduct(false);
-                setIsAddingProduct(false);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('products')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'products'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2113,13 +2223,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('manageCategories') && (
             <button
-              onClick={() => {
-                setActiveTab('categories');
-                setSelectedCategoryItem(null);
-                setIsEditingCategory(false);
-                setIsAddingCategory(false);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('categories')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'categories'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2132,13 +2236,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('manageCreations') && (
             <button
-              onClick={() => {
-                setActiveTab('creations');
-                setSelectedCreation(null);
-                setIsEditingCreation(false);
-                setIsAddingCreation(false);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('creations')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'creations'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2151,11 +2249,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('viewContacts') && (
             <button
-              onClick={() => {
-                setActiveTab('contacts');
-                setSelectedContactMessage(null);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('contacts')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'contacts'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2168,10 +2262,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('manageSettings') && (
             <button
-              onClick={() => {
-                setActiveTab('settings');
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('settings')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'settings'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2184,13 +2275,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('manageStaff') && (
             <button
-              onClick={() => {
-                setActiveTab('staff');
-                setSelectedStaff(null);
-                setIsEditingStaff(false);
-                setIsAddingStaff(false);
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('staff')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'staff'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2203,10 +2288,7 @@ export default function AdminDashboardPage() {
 
           {hasPermission('viewAuditLogs') && (
             <button
-              onClick={() => {
-                setActiveTab('audit');
-                setIsAdminMobileMenuOpen(false);
-              }}
+              onClick={() => switchTab('audit')}
               className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
                 activeTab === 'audit'
                   ? 'bg-primary text-primary-foreground shadow-sm'
@@ -2431,12 +2513,30 @@ export default function AdminDashboardPage() {
                                   </span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <button
-                                    onClick={() => setSelectedInquiry(inq)}
-                                    className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1.5 hover:opacity-90 transition-opacity"
-                                  >
-                                    View Details
-                                  </button>
+                                  <div className="flex items-center justify-end gap-2">
+                                    {(inq.status === 'pending' || inq.status === 'reviewing') && hasPermission('replyInquiries') && (
+                                      <>
+                                        <button
+                                          onClick={() => setOrderActionModal({ isOpen: true, action: 'confirm', itemType: 'inquiry', item: inq })}
+                                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-1.5 transition-opacity"
+                                        >
+                                          Confirm Order
+                                        </button>
+                                        <button
+                                          onClick={() => setOrderActionModal({ isOpen: true, action: 'reject', itemType: 'inquiry', item: inq })}
+                                          className="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2.5 py-1.5 transition-opacity"
+                                        >
+                                          Reject Order
+                                        </button>
+                                      </>
+                                    )}
+                                    <button
+                                      onClick={() => setSelectedInquiry(inq)}
+                                      className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1.5 hover:opacity-90 transition-opacity"
+                                    >
+                                      View Details
+                                    </button>
+                                  </div>
                                 </td>
                               </tr>
                             );
@@ -2807,12 +2907,30 @@ export default function AdminDashboardPage() {
                                   </span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <button
-                                    onClick={() => setSelectedCustomOrder(order)}
-                                    className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1.5 hover:opacity-90 transition-opacity"
-                                  >
-                                    View Details
-                                  </button>
+                                  <div className="flex items-center justify-end gap-2">
+                                    {(order.status === 'pending' || order.status === 'reviewing') && hasPermission('manageOrders') && (
+                                      <>
+                                        <button
+                                          onClick={() => setOrderActionModal({ isOpen: true, action: 'confirm', itemType: 'customOrder', item: order })}
+                                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-1.5 transition-opacity"
+                                        >
+                                          Confirm Order
+                                        </button>
+                                        <button
+                                          onClick={() => setOrderActionModal({ isOpen: true, action: 'reject', itemType: 'customOrder', item: order })}
+                                          className="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold px-2.5 py-1.5 transition-opacity"
+                                        >
+                                          Reject Order
+                                        </button>
+                                      </>
+                                    )}
+                                    <button
+                                      onClick={() => setSelectedCustomOrder(order)}
+                                      className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1.5 hover:opacity-90 transition-opacity"
+                                    >
+                                      View Details
+                                    </button>
+                                  </div>
                                 </td>
                               </tr>
                             );
@@ -5046,6 +5164,58 @@ export default function AdminDashboardPage() {
                 className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-5 py-2.5 rounded transition-colors"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Action Confirmation Modal */}
+      {orderActionModal && orderActionModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-md p-6 space-y-6 shadow-2xl rounded-none">
+            <div className="space-y-2">
+              <h3 className={`font-serif text-lg font-bold flex items-center gap-2 ${
+                orderActionModal.action === 'confirm' ? 'text-emerald-400' : 'text-rose-400'
+              }`}>
+                {orderActionModal.action === 'confirm' ? '✅ Confirm Order' : '❌ Reject Order'}
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {orderActionModal.action === 'confirm'
+                  ? `Are you sure you want to confirm this ${orderActionModal.itemType === 'inquiry' ? 'inquiry' : 'custom order'} for ${orderActionModal.item.customerName || orderActionModal.item.fullName || 'Customer'}?`
+                  : `Are you sure you want to reject this ${orderActionModal.itemType === 'inquiry' ? 'inquiry' : 'custom order'} for ${orderActionModal.item.customerName || orderActionModal.item.fullName || 'Customer'}?`}
+              </p>
+              <p className="text-[11px] text-slate-400 italic bg-slate-950 p-3 border border-slate-800">
+                {orderActionModal.action === 'confirm'
+                  ? 'The customer will receive a notification: "Your order has been confirmed by Queen\'s Bakery."'
+                  : 'The customer will receive a notification: "Unfortunately, your order could not be accepted at this time."'}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                disabled={submittingOrderAction}
+                onClick={() => setOrderActionModal(null)}
+                className="px-4 py-2.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold rounded-none transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={submittingOrderAction}
+                onClick={executeOrderAction}
+                className={`px-5 py-2.5 text-xs font-bold text-white rounded-none transition-opacity disabled:opacity-50 flex items-center gap-2 ${
+                  orderActionModal.action === 'confirm'
+                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                    : 'bg-rose-600 hover:bg-rose-700'
+                }`}
+              >
+                {submittingOrderAction ? (
+                  <span>Processing...</span>
+                ) : (
+                  <span>{orderActionModal.action === 'confirm' ? 'Confirm Order' : 'Reject Order'}</span>
+                )}
               </button>
             </div>
           </div>

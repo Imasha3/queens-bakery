@@ -112,6 +112,39 @@ export default function MyInquiriesPage() {
     };
   }, [user?.uid, language]);
 
+  const getStatusMessage = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'confirmed':
+        return language === 'en'
+          ? "Your order has been confirmed by Queen's Bakery."
+          : "ඔබගේ ඇණවුම ක්වීන්ස් බේකරිය විසින් තහවුරු කර ඇත.";
+      case 'rejected':
+      case 'declined':
+      case 'cancelled':
+        return language === 'en'
+          ? "Unfortunately, your order could not be accepted at this time."
+          : "කණගාටුයි, මේ අවස්ථාවේ දී ඔබගේ ඇණවුම පිළිගත නොහැකි විය.";
+      case 'reviewing':
+      case 'under_review':
+        return language === 'en'
+          ? "Your inquiry is currently being reviewed by our team."
+          : "ඔබගේ විමසීම අපගේ කණ්ඩායම විසින් පරීක්ෂා කරමින් පවතී.";
+      case 'quoted':
+        return language === 'en'
+          ? "Price quote generated. Please review response details below."
+          : "මිල ගණන් ලබා දී ඇත. කරුණාකර පහත විස්තර බලන්න.";
+      case 'completed':
+        return language === 'en'
+          ? "Your order has been completed. Thank you for choosing Queen's Bakery!"
+          : "ඔබගේ ඇණවුම සම්පූර්ණ කර ඇත. ක්වීන්ස් බේකරිය තෝරා ගැනීම ගැන ස්තූතියි!";
+      case 'pending':
+      default:
+        return language === 'en'
+          ? "Your order is waiting for confirmation."
+          : "ඔබගේ ඇණවුම තහවුරු කිරීම සඳහා බලාපොරොත්තුවෙන් පවතී.";
+    }
+  };
+
   const getStatusBadgeStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'pending':
@@ -258,6 +291,19 @@ export default function MyInquiriesPage() {
 
                   {/* Card Body details */}
                   <div className="p-6 space-y-6">
+                    {/* Status Message Banner */}
+                    <div className={`p-4 border rounded-none text-xs font-semibold flex items-center gap-3 ${
+                      inquiry.status === 'confirmed'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                        : inquiry.status === 'rejected' || inquiry.status === 'cancelled'
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
+                        : 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300'
+                    }`}>
+                      <span className="text-base">
+                        {inquiry.status === 'confirmed' ? '🎉' : inquiry.status === 'rejected' || inquiry.status === 'cancelled' ? '⚠️' : '⏳'}
+                      </span>
+                      <span>{getStatusMessage(inquiry.status)}</span>
+                    </div>
                     {/* Items List */}
                     <div className="space-y-4">
                       <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">

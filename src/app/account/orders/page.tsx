@@ -101,6 +101,42 @@ export default function MyOrdersPage() {
     };
   }, [user?.uid, language]);
 
+  const getStatusMessage = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'confirmed':
+      case 'accepted':
+        return language === 'en'
+          ? "Your order has been confirmed by Queen's Bakery."
+          : "ඔබගේ ඇණවුම ක්වීන්ස් බේකරිය විසින් තහවුරු කර ඇත.";
+      case 'rejected':
+      case 'declined':
+      case 'cancelled':
+        return language === 'en'
+          ? "Unfortunately, your order could not be accepted at this time."
+          : "කණගාටුයි, මේ අවස්ථාවේ දී ඔබගේ ඇණවුම පිළිගත නොහැකි විය.";
+      case 'reviewing':
+      case 'under_review':
+        return language === 'en'
+          ? "Your order is currently being reviewed by our master bakers."
+          : "ඔබගේ ඇණවුම අපගේ ප්‍රධාන බේකරි කණ්ඩායම විසින් පරීක්ෂා කරමින් පවතී.";
+      case 'in progress':
+      case 'preparing':
+        return language === 'en'
+          ? "Your custom bake is currently being crafted."
+          : "ඔබගේ ඇණවුම සූදානම් කරමින් පවතී.";
+      case 'ready':
+      case 'completed':
+        return language === 'en'
+          ? "Your order is completed / ready for pickup or delivery!"
+          : "ඔබගේ ඇණවුම සූදානම් කර ඇත!";
+      case 'pending':
+      default:
+        return language === 'en'
+          ? "Your order is waiting for confirmation."
+          : "ඔබගේ ඇණවුම තහවුරු කිරීම සඳහා බලාපොරොත්තුවෙන් පවතී.";
+    }
+  };
+
   const getStatusBadgeStyles = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'pending':
@@ -250,6 +286,19 @@ export default function MyOrdersPage() {
 
                   {/* Card Body details */}
                   <div className="p-6 space-y-6">
+                    {/* Status Message Banner */}
+                    <div className={`p-4 border rounded-none text-xs font-semibold flex items-center gap-3 ${
+                      order.status === 'confirmed' || order.status === 'accepted'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                        : order.status === 'rejected' || order.status === 'cancelled'
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
+                        : 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-300'
+                    }`}>
+                      <span className="text-base">
+                        {order.status === 'confirmed' || order.status === 'accepted' ? '🎉' : order.status === 'rejected' || order.status === 'cancelled' ? '⚠️' : '⏳'}
+                      </span>
+                      <span>{getStatusMessage(order.status)}</span>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                       
                       {/* Description & Reference Image */}
