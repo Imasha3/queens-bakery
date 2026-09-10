@@ -12,6 +12,7 @@ import { useApp } from '@/context/AppContext';
 import { fetchStaffAccounts, createStaffAccount, updateStaffAccount, toggleStaffStatus, deleteStaffAccount, sendStaffPasswordReset } from '@/lib/staff';
 import { StaffRole, AdminPermissions, AdminProfile, SUPER_ADMIN_PERMISSIONS, getDefaultPermissionsForRole, getRoleLabel } from '@/lib/permissions';
 import { createAuditLog, logAuditAction, logCustomerReply, fetchAuditLogs, fetchReplyHistoryForRecord, AuditLog, CustomerReplyLog } from '@/lib/audit';
+import AdminSidebar, { AdminTab, ADMIN_MENU_ITEMS } from '@/components/AdminSidebar';
 import { createCustomerNotification } from '@/lib/notifications';
 
 interface SummaryStats {
@@ -65,7 +66,7 @@ const PERMISSION_GROUPS: {
   },
 ];
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminTab }) {
   const { adminUser, isAdmin, adminProfile, permissions, hasPermission, loading, adminLogout } = useAdminAuth();
   const router = useRouter();
 
@@ -76,9 +77,7 @@ export default function AdminDashboardPage() {
     contactMessages: 'Loading...'
   });
 
-  type AdminTab = 'dashboard' | 'inquiries' | 'customOrders' | 'products' | 'categories' | 'creations' | 'contacts' | 'settings' | 'staff' | 'audit';
-
-  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [activeTab, setActiveTab] = useState<AdminTab>(initialTab || 'dashboard');
   const [isAdminMobileMenuOpen, setIsAdminMobileMenuOpen] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string[]>([]);
 
@@ -100,7 +99,7 @@ export default function AdminDashboardPage() {
     return () => window.removeEventListener('popstate', handleUrlTabSync);
   }, []);
 
-  const switchTab = (tab: AdminTab) => {
+  const switchTab = (tab: AdminTab, href?: string) => {
     setSelectedInquiry(null);
     setSelectedCustomOrder(null);
     setSelectedProduct(null);
@@ -121,9 +120,8 @@ export default function AdminDashboardPage() {
     setIsAdminMobileMenuOpen(false);
 
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.set('tab', tab);
-      window.history.pushState({}, '', url.toString());
+      const targetUrl = href || `/admin?tab=${tab}`;
+      window.history.pushState({}, '', targetUrl);
     }
   };
 
@@ -2142,186 +2140,17 @@ export default function AdminDashboardPage() {
         </span>
       </header>
 
-      {/* Backdrop overlay for mobile drawer */}
-      {isAdminMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
-          onClick={() => setIsAdminMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Sidebar navigation */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
-          isAdminMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
-        }`}
-      >
-        {/* Brand */}
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-          <Logo />
-          <button
-            onClick={() => setIsAdminMobileMenuOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white p-1"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Menu Items */}
-        <nav className="flex-grow p-4 space-y-1.5 overflow-y-auto">
-          {hasPermission('viewDashboard') && (
-            <button
-              onClick={() => switchTab('dashboard')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 ${
-                activeTab === 'dashboard'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              📊 Dashboard
-            </button>
-          )}
-          
-          {hasPermission('viewInquiries') && (
-            <button
-              onClick={() => switchTab('inquiries')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'inquiries'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              📋 Inquiries
-            </button>
-          )}
-
-          {hasPermission('viewOrders') && (
-            <button
-              onClick={() => switchTab('customOrders')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'customOrders'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              🎂 Custom Orders
-            </button>
-          )}
-
-          {hasPermission('manageProducts') && (
-            <button
-              onClick={() => switchTab('products')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'products'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              🍰 Products
-            </button>
-          )}
-
-          {hasPermission('manageCategories') && (
-            <button
-              onClick={() => switchTab('categories')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'categories'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              🏷️ Categories
-            </button>
-          )}
-
-          {hasPermission('manageCreations') && (
-            <button
-              onClick={() => switchTab('creations')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'creations'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              🖼️ Our Creations
-            </button>
-          )}
-
-          {hasPermission('viewContacts') && (
-            <button
-              onClick={() => switchTab('contacts')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'contacts'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              ✉️ Contact Messages
-            </button>
-          )}
-
-          {hasPermission('manageSettings') && (
-            <button
-              onClick={() => switchTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'settings'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              🌐 Social Media Links
-            </button>
-          )}
-
-          {hasPermission('manageStaff') && (
-            <button
-              onClick={() => switchTab('staff')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'staff'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              👥 Staff Management
-            </button>
-          )}
-
-          {hasPermission('viewAuditLogs') && (
-            <button
-              onClick={() => switchTab('audit')}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-semibold rounded-xl transition-colors duration-200 text-left ${
-                activeTab === 'audit'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              📜 Audit Logs
-            </button>
-          )}
-        </nav>
-
-        {/* User profile & Logout */}
-        <div className="p-4 border-t border-slate-800 space-y-3">
-          <div className="px-2 py-1 space-y-1">
-            <p className="text-xs font-bold text-white truncate">
-              {adminProfile?.name || adminUser?.email || 'Admin User'}
-            </p>
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
-                {getRoleLabel(adminProfile?.role || 'super_admin')}
-              </span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-800 hover:border-rose-500/50 hover:bg-rose-500/10 py-2.5 text-xs font-bold text-slate-400 hover:text-rose-400 transition-all duration-200"
-          >
-            🚪 Logout
-          </button>
-        </div>
-      </aside>
+      {/* Shared Reusable Admin Sidebar */}
+      <AdminSidebar
+        activeTab={activeTab}
+        onSelectTab={switchTab}
+        hasPermission={hasPermission}
+        adminProfile={adminProfile}
+        adminUserEmail={adminUser?.email || null}
+        onLogout={handleLogout}
+        isMobileOpen={isAdminMobileMenuOpen}
+        onCloseMobile={() => setIsAdminMobileMenuOpen(false)}
+      />
 
       {/* Main Content Area */}
       <main className="flex-grow flex flex-col min-w-0 max-w-full overflow-x-hidden">
