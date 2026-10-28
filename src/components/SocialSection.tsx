@@ -16,16 +16,16 @@ export default function SocialSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-20">
         
         {/* Highlighted Reviews Section */}
-        <div className="relative rounded-3xl bg-[#F8F2EC] dark:bg-[#1E1114]/90 border border-[#E8DDD2] dark:border-primary/25 p-6 sm:p-10 md:p-14 shadow-sm">
+        <div className="relative rounded-3xl bg-[#A0522D] dark:bg-[#783617] border border-[#823E1C] dark:border-[#5C2B14] p-6 sm:p-10 md:p-14 shadow-xl overflow-hidden">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/15 text-primary border border-primary/30 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 text-white border border-white/30 mb-3 shadow-xs">
               ❤️ {t('trust.title')}
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[#1F0F12] dark:text-[#FFF0F3] mt-2">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-white mt-2">
               {t('trust.title')}
             </h2>
-            <div className="h-1 w-12 bg-primary mx-auto mt-4 rounded-full" />
-            <p className="text-sm md:text-base font-medium text-[#482F33] dark:text-[#E2D0D4] mt-3 max-w-md mx-auto leading-relaxed">
+            <div className="h-1 w-12 bg-amber-300 mx-auto mt-4 rounded-full" />
+            <p className="text-sm md:text-base font-medium text-stone-100 dark:text-stone-200 mt-3 max-w-md mx-auto leading-relaxed">
               Real feedback from local inquiries and celebration orders across Sri Lanka.
             </p>
           </div>
@@ -34,24 +34,24 @@ export default function SocialSection() {
             {reviews.map((rev) => (
               <div
                 key={rev.name}
-                className="flex flex-col justify-between p-7 rounded-2xl bg-white dark:bg-[#180E10] border-2 border-[#E5CFD3] dark:border-primary/30 hover:border-primary/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group"
+                className="flex flex-col justify-between p-7 rounded-2xl bg-white dark:bg-[#1E1114] border-2 border-white/20 dark:border-white/10 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 relative group"
               >
                 {/* Large Background Quote mark */}
-                <span className="absolute top-4 right-6 text-7xl font-serif text-primary/15 group-hover:text-primary/25 transition-colors select-none pointer-events-none">
+                <span className="absolute top-4 right-6 text-7xl font-serif text-[#A0522D]/15 dark:text-primary/20 group-hover:text-[#A0522D]/25 transition-colors select-none pointer-events-none">
                   “
                 </span>
 
                 <div className="space-y-4 relative z-10">
                   {/* Rating Accent Bar */}
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-1 text-primary">
+                    <div className="flex gap-1 text-[#A0522D] dark:text-primary">
                       {[...Array(5)].map((_, i) => (
                         <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                           <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
                         </svg>
                       ))}
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/25 rounded-full px-2.5 py-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0522D] dark:text-primary bg-[#A0522D]/10 dark:bg-primary/10 border border-[#A0522D]/20 dark:border-primary/25 rounded-full px-2.5 py-0.5">
                       Verified
                     </span>
                   </div>
@@ -64,7 +64,7 @@ export default function SocialSection() {
 
                 {/* Author Info Bar */}
                 <div className="border-t border-[#ECDADB] dark:border-border/80 pt-5 mt-6 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary/15 text-primary border border-primary/30 font-serif font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#A0522D]/15 text-[#A0522D] dark:bg-primary/20 dark:text-primary border border-[#A0522D]/25 dark:border-primary/30 font-serif font-bold text-sm shrink-0">
                     {rev.name.charAt(0)}
                   </div>
                   <div>
