@@ -16,32 +16,32 @@ export default function SocialSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-20">
         
         {/* Highlighted Reviews Section */}
-        <div className="relative rounded-none bg-accent/25 dark:bg-[#1E1114]/60 border border-primary/25 p-6 sm:p-10 md:p-16 shadow-inner">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-xs font-semibold uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 mb-3">
+        <div className="relative rounded-3xl bg-[#F7EFE6] dark:bg-[#1E1114]/80 border border-[#EADBDE] dark:border-primary/25 p-6 sm:p-10 md:p-14 shadow-sm">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/15 text-primary border border-primary/30 mb-3">
               ❤️ {t('trust.title')}
             </span>
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2">
               {t('trust.title')}
             </h2>
             <div className="h-1 w-12 bg-primary mx-auto mt-4 rounded-full" />
-            <p className="text-sm font-light text-muted-foreground mt-4 max-w-md mx-auto">
+            <p className="text-sm font-medium text-muted-foreground mt-3 max-w-md mx-auto leading-relaxed">
               Real feedback from local inquiries and celebration orders across Sri Lanka.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {reviews.map((rev) => (
               <div
                 key={rev.name}
-                className="flex flex-col justify-between p-8 rounded-none bg-card dark:bg-[#180E10] border-2 border-primary/20 hover:border-primary/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group"
+                className="flex flex-col justify-between p-7 rounded-2xl bg-white dark:bg-[#180E10] border-2 border-[#E5CFD3] dark:border-primary/30 hover:border-primary/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group"
               >
                 {/* Large Background Quote mark */}
                 <span className="absolute top-4 right-6 text-7xl font-serif text-primary/15 group-hover:text-primary/25 transition-colors select-none pointer-events-none">
                   “
                 </span>
 
-                <div className="space-y-5 relative z-10">
+                <div className="space-y-4 relative z-10">
                   {/* Rating Accent Bar */}
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1 text-primary">
@@ -51,27 +51,27 @@ export default function SocialSection() {
                         </svg>
                       ))}
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/25 rounded-full px-2.5 py-0.5">
                       Verified
                     </span>
                   </div>
 
                   {/* Customer Review Message */}
-                  <p className="text-sm md:text-[15px] font-light text-foreground leading-relaxed italic">
+                  <p className="text-[15px] font-normal text-foreground leading-relaxed italic">
                     "{rev.review}"
                   </p>
                 </div>
 
                 {/* Author Info Bar */}
                 <div className="border-t border-border/80 pt-5 mt-6 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-none flex items-center justify-center bg-primary/15 text-primary border border-primary/30 font-serif font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary/15 text-primary border border-primary/30 font-serif font-bold text-sm shrink-0">
                     {rev.name.charAt(0)}
                   </div>
                   <div>
                     <h4 className="font-serif text-sm font-bold text-foreground">
                       {rev.name}
                     </h4>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <span className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-0.5">
                       <span>📍</span> {rev.location}, Sri Lanka
                     </span>
                   </div>
@@ -84,11 +84,11 @@ export default function SocialSection() {
         {/* Social Media Link cards */}
         {hasSocialLinks && (
           <div className="border-t border-border/60 pt-16">
-            <div className="rounded-none bg-accent/10 border border-border/80 p-8 md:p-12 text-center max-w-4xl mx-auto space-y-6">
+            <div className="rounded-3xl bg-[#F7EFE6] dark:bg-[#1E1114]/80 border border-[#EADBDE] dark:border-border/80 p-8 md:p-12 text-center max-w-4xl mx-auto space-y-6 shadow-sm">
               <h3 className="font-serif text-2xl md:text-3xl font-bold text-foreground">
                 {t('social.title')}
               </h3>
-              <p className="text-sm font-light text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              <p className="text-sm font-medium text-muted-foreground max-w-xl mx-auto leading-relaxed">
                 {t('social.subtitle')}
               </p>
               
@@ -99,7 +99,7 @@ export default function SocialSection() {
                     href={socialSettings.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-xl bg-white dark:bg-card border border-border/90 hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* Facebook SVG Logo */}
                     <svg className="w-5 h-5 text-blue-600 fill-current" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@ export default function SocialSection() {
                     href={socialSettings.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-xl bg-white dark:bg-card border border-border/90 hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* TikTok SVG Logo */}
                     <svg className="w-5 h-5 text-foreground fill-current" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ export default function SocialSection() {
                     href={socialSettings.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-none bg-card border border-border hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-3 rounded-xl bg-white dark:bg-card border border-border/90 hover:border-primary/50 text-sm font-semibold text-foreground px-8 py-3.5 shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto justify-center"
                   >
                     {/* WhatsApp SVG Logo */}
                     <svg className="w-5 h-5 text-emerald-500 fill-current" viewBox="0 0 24 24">

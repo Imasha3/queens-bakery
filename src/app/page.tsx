@@ -167,7 +167,7 @@ export default function Home() {
                 {t('products.title')}
               </h2>
               <div className="h-1 w-12 bg-primary mx-auto mt-4 rounded-full" />
-              <p className="text-xs font-light text-muted-foreground mt-3 max-w-md mx-auto">
+              <p className="text-sm font-normal text-muted-foreground mt-3 max-w-md mx-auto">
                 Hover or click View Details to inspect our ingredients. Prices and availability are provided upon inquiry request.
               </p>
             </div>

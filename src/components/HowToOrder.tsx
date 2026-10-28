@@ -95,7 +95,7 @@ export default function HowToOrder() {
             {t('howToOrder.title')}
           </h2>
           <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />
-          <p className="text-xs sm:text-sm font-light text-muted-foreground pt-2 max-w-md mx-auto">
+          <p className="text-xs sm:text-sm font-normal text-muted-foreground pt-2 max-w-md mx-auto">
             {language === 'en'
               ? 'We operate on a custom quote & availability model to ensure every cake & savoury order is fresh.'
               : 'අපගේ සෑම ආහාරයක්ම නැවුම්ව සැකසීමට විමසීම් පදනම් කරගත් ක්‍රමවේදයක් භාවිතා කෙරේ.'}
@@ -125,7 +125,7 @@ export default function HowToOrder() {
                       {step.title}
                     </h3>
                   </div>
-                  <p className="text-xs font-light text-muted-foreground leading-relaxed">
+                  <p className="text-xs font-normal text-muted-foreground leading-relaxed">
                     {step.desc}
                   </p>
                 </div>

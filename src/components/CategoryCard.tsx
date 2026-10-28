@@ -37,7 +37,7 @@ export default function CategoryCard({ image, name, description, href }: Categor
         <h3 className="font-serif text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-200">
           {name}
         </h3>
-        <p className="text-sm font-light text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
+        <p className="text-sm font-normal text-muted-foreground mb-6 line-clamp-2 leading-relaxed">
           {description}
         </p>
 

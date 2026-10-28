@@ -100,7 +100,7 @@ export default function ContactPage() {
             Contact Queen's Bakery
           </h1>
           <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />
-          <p className="text-sm font-light text-muted-foreground leading-relaxed max-w-lg mx-auto">
+          <p className="text-sm font-normal text-muted-foreground leading-relaxed max-w-lg mx-auto">
             We are based in Negombo, Sri Lanka and deliver fresh bespoke orders to Negombo, Seeduwa, Katunayake, Ja-Ela, Minuwangoda, Dankotuwa, Wennappuwa, and Marawila.
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function ContactPage() {
                 <h4 className="font-serif text-sm font-bold text-foreground">
                   Direct Inquiries & Custom Cakes
                 </h4>
-                <p className="text-xs font-light text-muted-foreground leading-relaxed">
+                <p className="text-xs font-normal text-muted-foreground leading-relaxed">
                   Have a question about custom gateaux, savory platters, or regional delivery dates? Send us a message or reach out via WhatsApp!
                 </p>
               </div>

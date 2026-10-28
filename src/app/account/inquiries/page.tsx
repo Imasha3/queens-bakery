@@ -341,7 +341,7 @@ export default function MyInquiriesPage() {
                                   x{item.quantity}
                                 </span>
                               </div>
-                              <p className="text-[10px] text-muted-foreground font-light">
+                              <p className="text-[10px] text-muted-foreground font-normal">
                                 {item.category}
                               </p>
 
@@ -406,7 +406,7 @@ export default function MyInquiriesPage() {
                           <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                             {language === 'en' ? 'Additional Customer Notes' : 'අමතර සටහන්'}
                           </span>
-                          <p className="text-xs font-light text-foreground bg-accent/10 p-3 rounded-none border border-border/40 leading-relaxed whitespace-pre-wrap">
+                          <p className="text-xs font-normal text-foreground bg-accent/10 p-3 rounded-none border border-border/40 leading-relaxed whitespace-pre-wrap">
                             {inquiry.notes}
                           </p>
                         </div>
@@ -455,7 +455,7 @@ export default function MyInquiriesPage() {
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                                 {language === 'en' ? "Message from Bakery Staff" : "බේකරියෙන් පණිවිඩය"}
                               </span>
-                              <p className="text-xs font-light text-foreground leading-relaxed whitespace-pre-wrap">
+                              <p className="text-xs font-normal text-foreground leading-relaxed whitespace-pre-wrap">
                                 {inquiry.adminMessage}
                               </p>
                             </div>
@@ -463,7 +463,7 @@ export default function MyInquiriesPage() {
                         </div>
                       ) : (
                         <div className="bg-accent/10 border border-border/40 p-4 rounded-none text-center">
-                          <span className="text-xs text-muted-foreground font-light block">
+                          <span className="text-xs text-muted-foreground font-normal block">
                             ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery team" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
                           </span>
                         </div>

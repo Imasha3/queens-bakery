@@ -100,7 +100,7 @@ function ProductsContent() {
             <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
               Our Products
             </h1>
-            <p className="text-xs sm:text-sm font-light text-muted-foreground leading-relaxed">
+            <p className="text-xs sm:text-sm font-normal text-muted-foreground leading-relaxed">
               Browse our creations and select the items you are interested in. Prices and availability are provided upon inquiry request.
             </p>
             <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />

@@ -207,7 +207,7 @@ export default function ProductDetailsPage({ params }: PageProps) {
                   {product.name}
                 </h1>
                 
-                <p className="text-sm font-light text-muted-foreground leading-relaxed">
+                <p className="text-sm font-normal text-muted-foreground leading-relaxed">
                   {product.description}
                 </p>
               </div>
@@ -367,7 +367,7 @@ export default function ProductDetailsPage({ params }: PageProps) {
             <h2 className="font-serif text-2xl font-bold text-foreground">
               Product Details
             </h2>
-            <p className="text-sm font-light text-muted-foreground leading-relaxed max-w-4xl whitespace-pre-line">
+            <p className="text-sm font-normal text-muted-foreground leading-relaxed max-w-4xl whitespace-pre-line">
               {product.longDescription || product.description}
             </p>
           </div>

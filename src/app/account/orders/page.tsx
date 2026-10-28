@@ -307,7 +307,7 @@ export default function MyOrdersPage() {
                           <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
                             {language === 'en' ? 'Design Requirements' : 'නිර්මාණ අවශ්‍යතා'}
                           </h4>
-                          <p className="text-xs font-light text-foreground bg-accent/10 p-4 border border-border/60 rounded-none leading-relaxed whitespace-pre-wrap">
+                          <p className="text-xs font-normal text-foreground bg-accent/10 p-4 border border-border/60 rounded-none leading-relaxed whitespace-pre-wrap">
                             {order.requirements || order.notes || (order as any).details || 'No description provided.'}
                           </p>
                         </div>
@@ -389,7 +389,7 @@ export default function MyOrdersPage() {
                               <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                                 {language === 'en' ? "Message from Bakery Staff" : "බේකරියෙන් පණිවිඩය"}
                               </span>
-                              <p className="text-xs font-light text-foreground leading-relaxed whitespace-pre-wrap">
+                              <p className="text-xs font-normal text-foreground leading-relaxed whitespace-pre-wrap">
                                 {order.adminMessage}
                               </p>
                             </div>
@@ -397,7 +397,7 @@ export default function MyOrdersPage() {
                         </div>
                       ) : (
                         <div className="bg-accent/10 border border-border/40 p-4 rounded-none text-center">
-                          <span className="text-xs text-muted-foreground font-light block">
+                          <span className="text-xs text-muted-foreground font-normal block">
                             ⏳ {language === 'en' ? "Awaiting response from Queen's Bakery team" : "ක්වීන්ස් බේකරි වෙතින් පිළිතුරක් බලාපොරොත්තුවෙන්"}
                           </span>
                         </div>

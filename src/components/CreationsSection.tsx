@@ -98,7 +98,7 @@ export default function CreationsSection() {
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               {language === 'en' ? 'Our Creations' : 'අපගේ නිර්මාණ'}
             </h2>
-            <p className="text-xs md:text-sm font-light text-muted-foreground">
+            <p className="text-xs md:text-sm font-normal text-muted-foreground">
               {language === 'en'
                 ? 'Handcrafted custom gateaux, delicate savouries, and celebration arrangements.'
                 : 'අපගේ විශේෂ නිර්මාණ සහ අලංකාර බේකරි නිෂ්පාදන.'}

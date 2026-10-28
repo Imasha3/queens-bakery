@@ -167,7 +167,7 @@ export default function InquiryModal() {
               <h3 className="font-serif text-lg font-bold text-foreground">
                 {language === 'en' ? "Inquiry Submitted!" : "විමසීම ඉදිරිපත් කරන ලදී!"}
               </h3>
-              <p className="text-sm font-light text-muted-foreground max-w-sm leading-relaxed">
+              <p className="text-sm font-normal text-muted-foreground max-w-sm leading-relaxed">
                 {t('inquiryModal.successMsg')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center mt-4">
@@ -209,7 +209,7 @@ export default function InquiryModal() {
                 </div>
                 
                 {inquiryCart.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs font-light text-muted-foreground">
+                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs font-normal text-muted-foreground">
                     {t('products.noProducts')}
                   </div>
                 ) : (

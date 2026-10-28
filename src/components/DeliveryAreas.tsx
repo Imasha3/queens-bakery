@@ -22,7 +22,7 @@ export default function DeliveryAreas() {
             {t('delivery.title')}
           </h2>
           <div className="h-1 w-12 bg-primary mx-auto mt-2 rounded-full" />
-          <p className="text-xs sm:text-sm font-light text-muted-foreground max-w-xl mx-auto pt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm font-normal text-muted-foreground max-w-xl mx-auto pt-2 leading-relaxed">
             {language === 'en'
               ? "To ensure maximum freshness, custom gateaux quality, and safe hand-delivery, Queen's Bakery delivers exclusively to the 8 designated regional areas below."
               : "උසස්ම නැවුම්බව සහ ආරක්ෂිත භාරදීම තහවුරු කිරීම සඳහා, අපගේ සේවාව පහත සඳහන් ප්‍රදේශ 8 සඳහා පමණක් සීමා වේ."}

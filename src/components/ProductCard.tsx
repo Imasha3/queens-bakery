@@ -72,7 +72,7 @@ export default function ProductCard({ id, slug, image, name, category, descripti
           </h3>
         </Link>
         
-        <p className="text-xs font-light text-muted-foreground mb-5 line-clamp-2 leading-relaxed">
+        <p className="text-xs font-normal text-muted-foreground mb-5 line-clamp-2 leading-relaxed">
           {description}
         </p>
 

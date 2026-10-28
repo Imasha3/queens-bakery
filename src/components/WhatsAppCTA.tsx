@@ -28,7 +28,7 @@ export default function WhatsAppCTA() {
           {t('whatsapp.title')}
         </h3>
         
-        <p className="text-sm font-light text-muted-foreground max-w-lg mx-auto leading-relaxed">
+        <p className="text-sm font-normal text-muted-foreground max-w-lg mx-auto leading-relaxed">
           {t('whatsapp.description')}
         </p>
 

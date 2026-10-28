@@ -25,7 +25,7 @@ export default function CustomOrderCTA() {
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                 {t('custom.title')}
               </h2>
-              <p className="text-sm font-light text-muted-foreground leading-relaxed">
+              <p className="text-sm font-normal text-muted-foreground leading-relaxed">
                 {t('custom.description')}
               </p>
               
@@ -55,7 +55,7 @@ export default function CustomOrderCTA() {
                       <h4 className="font-serif text-sm font-bold text-foreground">
                         {pt}
                       </h4>
-                      <p className="text-xs font-light text-muted-foreground">
+                      <p className="text-xs font-normal text-muted-foreground">
                         Customized size, theme flavor, and delivery timing.
                       </p>
                     </div>
