@@ -90,7 +90,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-border/80 bg-card/95 dark:bg-card/95 backdrop-blur-md transition-colors duration-300 shadow-xs">
+    <nav className="sticky top-0 z-40 w-full border-b border-[#D4C0AD] dark:border-primary/25 bg-[#E6D5C3]/95 dark:bg-[#201316]/95 backdrop-blur-md transition-colors duration-300 shadow-xs">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           
@@ -112,8 +112,8 @@ export default function Navbar() {
                     href={link.href}
                     className={`px-4 py-2 text-[15px] font-semibold transition-all duration-200 ${
                       isActive
-                        ? 'bg-primary/10 text-primary font-bold shadow-xs border border-primary/25 rounded-none'
-                        : 'text-foreground/90 hover:text-primary hover:bg-accent/40 rounded-none'
+                        ? 'bg-primary/20 text-primary font-bold shadow-xs border border-primary/30 rounded-none'
+                        : 'text-[#2A171A] hover:text-primary hover:bg-[#DAC6B3] dark:text-[#FCEEEF] dark:hover:bg-accent/40 rounded-none'
                     }`}
                   >
                     {link.label}
@@ -122,16 +122,16 @@ export default function Navbar() {
               })}
             </div>
 
-            <div className="flex items-center gap-3 border-l border-border/80 pl-6">
+            <div className="flex items-center gap-3 border-l border-[#D4C0AD] dark:border-border/80 pl-6">
               
               {/* Language Selector */}
-              <div className="flex items-center bg-accent/60 p-1 border border-border/80 rounded-none">
+              <div className="flex items-center bg-[#DAC6B3] dark:bg-accent/60 p-1 border border-[#CBB39F] dark:border-border/80 rounded-none">
                 <button
                   onClick={() => setLanguage('en')}
                   className={`px-3 py-1 text-xs font-semibold transition-all duration-200 ${
                     language === 'en'
                       ? 'bg-primary text-primary-foreground font-bold shadow-sm'
-                      : 'text-foreground/80 hover:text-foreground'
+                      : 'text-[#2A171A] dark:text-foreground/80 hover:text-primary'
                   }`}
                 >
                   EN
@@ -141,7 +141,7 @@ export default function Navbar() {
                   className={`px-3 py-1 text-xs font-semibold transition-all duration-200 ${
                     language === 'si'
                       ? 'bg-primary text-primary-foreground font-bold shadow-sm'
-                      : 'text-foreground/80 hover:text-foreground'
+                      : 'text-[#2A171A] dark:text-foreground/80 hover:text-primary'
                   }`}
                 >
                   සිං
@@ -152,10 +152,10 @@ export default function Navbar() {
               <button
                 onClick={toggleTheme}
                 aria-label="Toggle Theme"
-                className="flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 hover:bg-accent text-foreground transition-all duration-200 rounded-none cursor-pointer"
+                className="flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 hover:bg-[#CFB9A3] dark:hover:bg-accent text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
               >
                 {theme === 'light' ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-amber-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-amber-600">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                   </svg>
                 ) : (
@@ -168,7 +168,7 @@ export default function Navbar() {
               {/* Inquiry Cart Icon Button */}
               <button
                 onClick={() => setInquiryModalOpen(true)}
-                className="relative flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 hover:bg-accent text-foreground transition-all duration-200 rounded-none cursor-pointer"
+                className="relative flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 hover:bg-[#CFB9A3] dark:hover:bg-accent text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
                 aria-label="View Selected Inquiry Items"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -186,7 +186,7 @@ export default function Navbar() {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
-                    className="relative flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 hover:bg-accent text-foreground transition-all duration-200 rounded-none cursor-pointer"
+                    className="relative flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 hover:bg-[#CFB9A3] dark:hover:bg-accent text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
                     aria-label="Customer Notifications"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -275,7 +275,7 @@ export default function Navbar() {
               {/* Account Button displaying Customer Name */}
               <button
                 onClick={handleAccountClick}
-                className="flex items-center gap-2.5 px-4 py-2 border border-primary/25 bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200 rounded-none cursor-pointer"
+                className="flex items-center gap-2.5 px-4 py-2 border border-primary/30 bg-primary/15 hover:bg-primary/25 text-[#2A171A] dark:text-primary transition-all duration-200 rounded-none cursor-pointer"
                 aria-label="Account Access"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 shrink-0 text-primary">
@@ -298,7 +298,7 @@ export default function Navbar() {
                   setIsMobileMenuOpen(!isMobileMenuOpen);
                   setIsNotifDropdownOpen(!isNotifDropdownOpen);
                 }}
-                className="relative flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 text-foreground transition-all duration-200 rounded-none cursor-pointer"
+                className="relative flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
                 aria-label="Notifications"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -315,7 +315,7 @@ export default function Navbar() {
             {/* Quick Mobile Cart */}
             <button
               onClick={() => setInquiryModalOpen(true)}
-              className="relative flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 text-foreground transition-all duration-200 rounded-none cursor-pointer"
+              className="relative flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
               aria-label="View Selected Inquiry Items"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -331,7 +331,7 @@ export default function Navbar() {
             {/* Mobile Menu Hamburger Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex items-center justify-center w-10 h-10 border border-border/80 bg-accent/30 text-foreground transition-all duration-200 rounded-none cursor-pointer"
+              className="flex items-center justify-center w-10 h-10 border border-[#CBB39F] dark:border-border/80 bg-[#DAC6B3] dark:bg-accent/30 text-[#2A171A] dark:text-foreground transition-all duration-200 rounded-none cursor-pointer"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? (
@@ -350,7 +350,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-border/80 bg-card/98 dark:bg-card/98 text-foreground backdrop-blur-md transition-all duration-300 shadow-xl max-h-[85vh] overflow-y-auto">
+        <div className="lg:hidden border-t border-[#D4C0AD] dark:border-primary/25 bg-[#E6D5C3] dark:bg-[#201316] text-[#2A171A] dark:text-[#FCEEEF] backdrop-blur-md transition-all duration-300 shadow-xl max-h-[85vh] overflow-y-auto">
           <div className="space-y-2 px-4 py-5 sm:px-6">
             
             {/* Customer Greeting Header in Mobile Drawer */}
