@@ -90,9 +90,9 @@ export default function ProductDetailsPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+      <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
         <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <main className="flex-grow w-full max-w-full flex flex-col items-center justify-center py-20 text-center space-y-4">
           <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
             Loading Product Details...
@@ -105,9 +105,9 @@ export default function ProductDetailsPage({ params }: PageProps) {
 
   if (!product || product.active === false) {
     return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+      <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
         <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <main className="flex-grow w-full max-w-full flex flex-col items-center justify-center py-20 text-center space-y-4">
           <h2 className="font-serif text-3xl font-bold">Product Not Found</h2>
           <p className="text-sm text-muted-foreground">The product you are looking for does not exist or is currently unavailable.</p>
           <Link href="/products" className="rounded-xl bg-primary text-primary-foreground px-6 py-2.5 text-xs font-semibold shadow-sm">
@@ -136,10 +136,10 @@ export default function ProductDetailsPage({ params }: PageProps) {
     : [];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-grow py-12">
+      <main className="flex-grow w-full max-w-full py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
           
           {/* Breadcrumbs */}

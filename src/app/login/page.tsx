@@ -45,10 +45,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-grow flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow w-full max-w-full flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8 bg-card border border-border p-8 rounded-3xl shadow-xl">
           
           {/* Header */}

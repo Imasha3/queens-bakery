@@ -89,10 +89,10 @@ function ProductsContent() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-grow py-12 md:py-16">
+      <main className="flex-grow w-full max-w-full py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Header */}

@@ -9,9 +9,9 @@ import InquiryModal from '@/components/InquiryModal';
 
 export default function DeliveryPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow w-full max-w-full">
         <HowToOrder />
         <DeliveryAreas />
       </main>

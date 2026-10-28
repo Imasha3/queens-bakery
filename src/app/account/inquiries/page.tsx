@@ -180,9 +180,9 @@ export default function MyInquiriesPage() {
 
   if (authLoading || (loading && inquiries.length === 0)) {
     return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+      <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
         <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center py-24">
+        <main className="flex-grow w-full max-w-full flex flex-col items-center justify-center py-24">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             <span className="text-xs font-semibold text-muted-foreground tracking-widest uppercase animate-pulse">
@@ -198,10 +198,10 @@ export default function MyInquiriesPage() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground transition-colors duration-300">
       <Navbar />
 
-      <main className="flex-grow py-12">
+      <main className="flex-grow w-full max-w-full py-12">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8">
           
           {/* Header & Customer Name */}

@@ -29,7 +29,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#A0522D] dark:bg-[#783617] text-white border-t-2 border-[#823E1C] dark:border-[#5C2B14] mt-auto transition-colors duration-300 relative overflow-hidden">
+    <footer className="w-full max-w-full inset-x-0 left-0 right-0 bg-[#A0522D] dark:bg-[#783617] text-white border-t-2 border-[#823E1C] dark:border-[#5C2B14] mt-auto transition-colors duration-300 relative overflow-hidden">
       {/* Top Accent Line */}
       <div className="h-1 w-full bg-gradient-to-r from-amber-300/40 via-amber-300 to-amber-300/40" />
 

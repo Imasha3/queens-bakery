@@ -27,11 +27,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full w-full max-w-full overflow-x-hidden antialiased`}
       suppressHydrationWarning
     >
       <body
-        className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300"
+        className="min-h-full w-full max-w-full overflow-x-hidden flex flex-col bg-background text-foreground transition-colors duration-300"
         suppressHydrationWarning
       >
         <AppProvider>
