@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
 import { fetchActiveProducts, Product } from '@/lib/products';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import CategoryCard from '@/components/CategoryCard';
 import ProductCard from '@/components/ProductCard';
-import HowToOrder from '@/components/HowToOrder';
-import DeliveryAreas from '@/components/DeliveryAreas';
 import CustomOrderCTA from '@/components/CustomOrderCTA';
 import SocialSection from '@/components/SocialSection';
 import WhatsAppCTA from '@/components/WhatsAppCTA';
@@ -26,6 +24,18 @@ export default function Home() {
   // Dynamic Categories from Firestore
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollCategories = (direction: 'left' | 'right') => {
+    if (categoryScrollRef.current) {
+      const container = categoryScrollRef.current;
+      const scrollAmount = container.clientWidth * 0.75;
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   useEffect(() => {
     testFirebaseConnection();
@@ -77,17 +87,43 @@ export default function Home() {
         {/* 1. Hero Section */}
         <HeroSection />
 
-        {/* 2. Categories Section */}
-        <section id="categories" className="py-16 md:py-24 bg-card transition-colors duration-300">
+        {/* 2. Categories Section (3 Large Items Initially + Horizontal Scroll Navigation) */}
+        <section id="categories" className="py-16 md:py-24 bg-card transition-colors duration-300 overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="text-xs font-semibold text-primary tracking-widest uppercase">
-                Browse Collections
-              </span>
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2">
-                {t('categories.title')}
-              </h2>
-              <div className="h-1 w-12 bg-primary mx-auto mt-4 rounded-full" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+              <div className="text-center md:text-left">
+                <span className="text-xs font-semibold text-primary tracking-widest uppercase">
+                  Browse Collections
+                </span>
+                <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2">
+                  {t('categories.title')}
+                </h2>
+                <div className="h-1 w-12 bg-primary mt-4 rounded-full mx-auto md:mx-0" />
+              </div>
+
+              {/* Navigation Arrows for Categories */}
+              {categoriesList.length > 3 && (
+                <div className="hidden sm:flex items-center gap-3 justify-center md:justify-end">
+                  <button
+                    onClick={() => scrollCategories('left')}
+                    className="flex h-11 w-11 items-center justify-center rounded-none border border-border/80 bg-background hover:bg-accent text-foreground transition-all duration-200 cursor-pointer shadow-sm hover:border-primary/50"
+                    aria-label="Previous categories"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => scrollCategories('right')}
+                    className="flex h-11 w-11 items-center justify-center rounded-none border border-border/80 bg-background hover:bg-accent text-foreground transition-all duration-200 cursor-pointer shadow-sm hover:border-primary/50"
+                    aria-label="Next categories"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             {loadingCategories ? (
@@ -98,15 +134,22 @@ export default function Home() {
                 </span>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div
+                ref={categoryScrollRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none"
+              >
                 {categoriesList.map((cat) => (
-                  <CategoryCard
+                  <div
                     key={cat.id}
-                    image={cat.image}
-                    name={cat.name}
-                    description={cat.description}
-                    href={cat.href}
-                  />
+                    className="w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 snap-start flex flex-col"
+                  >
+                    <CategoryCard
+                      image={cat.image}
+                      name={cat.name}
+                      description={cat.description}
+                      href={cat.href}
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -161,23 +204,17 @@ export default function Home() {
         {/* 4. Our Creations Carousel Showcase */}
         <CreationsSection />
 
-        {/* 5. How To Order Section */}
-        <HowToOrder />
-
-        {/* 5. Delivery Areas Section */}
-        <DeliveryAreas />
-
-        {/* 6. Custom Orders CTA Section */}
+        {/* 5. Custom Orders CTA Section */}
         <CustomOrderCTA />
 
-        {/* 7. Social Section (Trust Reviews & Social Follow buttons) */}
+        {/* 6. Social Section (Trust Reviews & Social Follow buttons) */}
         <SocialSection />
 
-        {/* 8. WhatsApp CTA Section */}
+        {/* 7. WhatsApp CTA Section */}
         <WhatsAppCTA />
       </main>
 
-      {/* 9. Footer Section */}
+      {/* 8. Footer Section */}
       <Footer />
 
       {/* Inquiry Dialog Modal */}

@@ -15,15 +15,18 @@ export default function SocialSection() {
     <section className="py-16 md:py-24 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-20">
         
-        {/* Reviews Section */}
-        <div>
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+        {/* Highlighted Reviews Section */}
+        <div className="relative rounded-none bg-accent/25 dark:bg-[#1E1114]/60 border border-primary/25 p-6 sm:p-10 md:p-16 shadow-inner">
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-xs font-semibold uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 mb-3">
+              ❤️ {t('trust.title')}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2">
               {t('trust.title')}
             </h2>
             <div className="h-1 w-12 bg-primary mx-auto mt-4 rounded-full" />
-            <p className="text-sm font-light text-muted-foreground mt-4">
-              Real feedback from local inquiries and deliveries.
+            <p className="text-sm font-light text-muted-foreground mt-4 max-w-md mx-auto">
+              Real feedback from local inquiries and celebration orders across Sri Lanka.
             </p>
           </div>
 
@@ -31,35 +34,47 @@ export default function SocialSection() {
             {reviews.map((rev) => (
               <div
                 key={rev.name}
-                className="flex flex-col justify-between p-8 rounded-none bg-card border border-border shadow-sm hover:shadow-md transition-shadow duration-300 relative"
+                className="flex flex-col justify-between p-8 rounded-none bg-card dark:bg-[#180E10] border-2 border-primary/20 hover:border-primary/60 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative group"
               >
-                {/* Quote decoration */}
-                <span className="absolute top-4 right-6 text-7xl font-serif text-primary/10 select-none pointer-events-none">
+                {/* Large Background Quote mark */}
+                <span className="absolute top-4 right-6 text-7xl font-serif text-primary/15 group-hover:text-primary/25 transition-colors select-none pointer-events-none">
                   “
                 </span>
 
-                <div className="space-y-4">
-                  {/* Static Heart Icons - Premium Touch */}
-                  <div className="flex gap-1 text-primary">
-                    {[...Array(5)].map((_, i) => (
-                      <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                      </svg>
-                    ))}
+                <div className="space-y-5 relative z-10">
+                  {/* Rating Accent Bar */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1 text-primary">
+                      {[...Array(5)].map((_, i) => (
+                        <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                          <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-2 py-0.5">
+                      Verified
+                    </span>
                   </div>
 
-                  <p className="text-sm font-light text-foreground/95 italic leading-relaxed">
+                  {/* Customer Review Message */}
+                  <p className="text-sm md:text-[15px] font-light text-foreground leading-relaxed italic">
                     "{rev.review}"
                   </p>
                 </div>
 
-                <div className="border-t border-border/60 pt-4 mt-6">
-                  <h4 className="font-serif text-sm font-bold text-foreground">
-                    {rev.name}
-                  </h4>
-                  <span className="text-xs text-muted-foreground">
-                    📍 {rev.location}, Sri Lanka
-                  </span>
+                {/* Author Info Bar */}
+                <div className="border-t border-border/80 pt-5 mt-6 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-none flex items-center justify-center bg-primary/15 text-primary border border-primary/30 font-serif font-bold text-sm shrink-0">
+                    {rev.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-sm font-bold text-foreground">
+                      {rev.name}
+                    </h4>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span>📍</span> {rev.location}, Sri Lanka
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
