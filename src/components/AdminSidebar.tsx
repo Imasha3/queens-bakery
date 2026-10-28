@@ -70,7 +70,7 @@ export default function AdminSidebar({
 
       {/* Reusable Fixed Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 min-w-[256px] max-w-[256px] flex-shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 min-w-[256px] max-w-[256px] flex-shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-300 lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
         }`}
       >

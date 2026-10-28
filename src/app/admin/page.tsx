@@ -121,6 +121,7 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
     setIsAdminMobileMenuOpen(false);
 
     if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       const targetUrl = href || `/admin?tab=${tab}`;
       window.history.pushState({}, '', targetUrl);
     }
@@ -2144,7 +2145,7 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
     <div className="flex flex-col lg:flex-row min-h-screen bg-slate-950 text-slate-100 font-sans min-w-0 max-w-full overflow-x-hidden">
       
       {/* Mobile Top Navigation Bar (lg:hidden) */}
-      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
+      <header className="lg:hidden flex items-center justify-between px-4 py-3 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsAdminMobileMenuOpen(!isAdminMobileMenuOpen)}
@@ -2162,7 +2163,7 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
         </span>
       </header>
 
-      {/* Shared Reusable Admin Sidebar */}
+      {/* Shared Reusable Admin Sidebar (Fixed on Desktop & Slide-out on Mobile) */}
       <AdminSidebar
         activeTab={activeTab}
         onSelectTab={switchTab}
@@ -2174,10 +2175,10 @@ export default function AdminDashboardPage({ initialTab }: { initialTab?: AdminT
         onCloseMobile={() => setIsAdminMobileMenuOpen(false)}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-grow flex flex-col min-w-0 max-w-full overflow-x-hidden">
-        {/* Top Header */}
-        <header className="hidden lg:flex h-16 border-b border-slate-800 bg-slate-900/50 items-center justify-between px-8">
+      {/* Main Content Area - Permanently offset by 256px on desktop for fixed sidebar */}
+      <main className="flex-grow flex flex-col min-w-0 max-w-full overflow-x-hidden lg:pl-64">
+        {/* Top Header - Sticky on Desktop */}
+        <header className="hidden lg:flex h-16 border-b border-slate-800 bg-slate-900/95 backdrop-blur-md items-center justify-between px-8 sticky top-0 z-30">
           <h2 className="text-sm font-semibold tracking-wide uppercase text-slate-400">
             System Dashboard
           </h2>
