@@ -49,6 +49,10 @@
   --radius-sm: calc(var(--radius) - 0.5rem);
 }
 
+html {
+  scroll-padding-top: 5rem;
+}
+
 html,
 body {
   width: 100%;

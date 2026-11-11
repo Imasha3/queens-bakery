@@ -54,7 +54,9 @@ export default function Navbar() {
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const customerName = user ? (profile?.fullName || user.displayName || 'Customer') : 'Guest';
+  const defaultCustomerLabel = language === 'si' ? 'පාරිභෝගිකයා' : 'Customer';
+  const guestLabel = language === 'si' ? 'ආගන්තුක' : 'Guest';
+  const customerName = user ? (profile?.fullName || user.displayName || defaultCustomerLabel) : guestLabel;
 
   const navLinks = [
     { label: t('nav.home'), href: '/' },
@@ -90,88 +92,238 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 w-full max-w-full inset-x-0 left-0 right-0 border-b border-[#823E1C] dark:border-[#5C2B14] bg-[#A0522D]/95 dark:bg-[#783617]/95 backdrop-blur-md transition-colors duration-300 shadow-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
-          
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2">
-              <Logo />
-            </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:gap-3 xl:gap-8 shrink-0">
-            <div className="flex items-center gap-1 xl:gap-1.5">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`px-2.5 xl:px-4 py-2 text-sm xl:text-[15px] font-semibold transition-all duration-200 whitespace-nowrap ${
-                      isActive
-                        ? 'bg-white/20 text-white font-bold shadow-xs border border-white/30 rounded-none'
-                        : 'text-white/90 hover:text-white hover:bg-white/10 rounded-none'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
+    <>
+      <header className="fixed top-0 left-0 right-0 z-40 w-full max-w-full border-b border-[#823E1C] dark:border-[#5C2B14] bg-[#A0522D]/95 dark:bg-[#783617]/95 backdrop-blur-md transition-colors duration-300 shadow-md">
+        <nav aria-label="Main Navigation" className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-4 xl:px-8">
+          <div className="flex h-20 items-center justify-between gap-2 lg:gap-3 xl:gap-4">
+            
+            {/* Logo */}
+            <div className="shrink-0 flex items-center">
+              <Link href="/" className="flex items-center gap-2">
+                <Logo heightClass="h-10 sm:h-11 md:h-12 xl:h-14" />
+              </Link>
             </div>
 
-            <div className="flex items-center gap-2 xl:gap-3 border-l border-white/25 pl-3 xl:pl-6 shrink-0">
-              
-              {/* Language Selector */}
-              <div className="flex items-center bg-black/20 dark:bg-black/40 p-1 border border-white/20 rounded-none">
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 text-xs font-semibold transition-all duration-200 ${
-                    language === 'en'
-                      ? 'bg-white text-[#A0522D] font-bold shadow-sm'
-                      : 'text-white/80 hover:text-white'
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => setLanguage('si')}
-                  className={`px-3 py-1 text-xs font-semibold transition-all duration-200 ${
-                    language === 'si'
-                      ? 'bg-white text-[#A0522D] font-bold shadow-sm'
-                      : 'text-white/80 hover:text-white'
-                  }`}
-                >
-                  සිං
-                </button>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center justify-end gap-1.5 xl:gap-3 2xl:gap-5 min-w-0 flex-1">
+              <div className="flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 shrink-0">
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`inline-flex items-center justify-center text-center h-9 xl:h-10 px-1.5 xl:px-3 2xl:px-4 text-[11px] xl:text-[13px] 2xl:text-[14.5px] font-semibold transition-all duration-200 whitespace-nowrap leading-none ${
+                        isActive
+                          ? 'bg-white/20 text-white font-bold shadow-xs border border-white/30 rounded-none'
+                          : 'text-white/90 hover:text-white hover:bg-white/10 rounded-none'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
 
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle Theme"
-                className="flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer"
-              >
-                {theme === 'light' ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-amber-300">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-amber-300">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38l1.59 1.59M3 12h2.25m13.5 0H21m-16.78 6.78l1.59-1.59M18.78 5.22l-1.59 1.59M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z" />
-                  </svg>
-                )}
-              </button>
+              <div className="flex items-center gap-1.5 xl:gap-2 2xl:gap-3 border-l border-white/25 pl-2 xl:pl-3 2xl:pl-5 shrink-0">
+                
+                {/* Language Selector */}
+                <div className="flex items-center bg-black/20 dark:bg-black/40 p-0.5 xl:p-1 border border-white/20 rounded-none h-9 xl:h-10">
+                  <button
+                    onClick={() => setLanguage('en')}
+                    className={`h-full px-2 xl:px-2.5 text-xs font-semibold transition-all duration-200 flex items-center justify-center ${
+                      language === 'en'
+                        ? 'bg-white text-[#A0522D] font-bold shadow-sm'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    onClick={() => setLanguage('si')}
+                    className={`h-full px-2 xl:px-2.5 text-xs font-semibold transition-all duration-200 flex items-center justify-center ${
+                      language === 'si'
+                        ? 'bg-white text-[#A0522D] font-bold shadow-sm'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    සිං
+                  </button>
+                </div>
 
-              {/* Inquiry Cart Icon Button */}
+                {/* Theme Toggle */}
+                <button
+                  onClick={toggleTheme}
+                  aria-label="Toggle Theme"
+                  className="flex items-center justify-center w-9 h-9 xl:w-10 xl:h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer shrink-0"
+                >
+                  {theme === 'light' ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 xl:w-5 xl:h-5 text-amber-300">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 xl:w-5 xl:h-5 text-amber-300">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38l1.59 1.59M3 12h2.25m13.5 0H21m-16.78 6.78l1.59-1.59M18.78 5.22l-1.59 1.59M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Inquiry Cart Icon Button */}
+                <button
+                  onClick={() => setInquiryModalOpen(true)}
+                  className="relative flex items-center justify-center w-9 h-9 xl:w-10 xl:h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer shrink-0"
+                  aria-label="View Selected Inquiry Items"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 xl:w-5 xl:h-5 text-white">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 xl:h-5 xl:w-5 items-center justify-center bg-amber-400 text-[9px] xl:text-[10px] font-bold text-stone-950 shadow-sm">
+                      {cartItemCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Customer Notifications Bell Dropdown */}
+                {user && (
+                  <div className="relative shrink-0" ref={dropdownRef}>
+                    <button
+                      onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
+                      className="relative flex items-center justify-center w-9 h-9 xl:w-10 xl:h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer shrink-0"
+                      aria-label="Customer Notifications"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 xl:w-5 xl:h-5 text-white">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                      </svg>
+                      {unreadCount > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 xl:h-5 xl:w-5 items-center justify-center bg-rose-500 text-[9px] xl:text-[10px] font-bold text-white shadow-sm animate-pulse">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isNotifDropdownOpen && (
+                      <div className="absolute right-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] bg-card border border-border text-foreground shadow-2xl z-50 animate-in fade-in duration-150 p-4 space-y-3">
+                        <div className="flex items-center justify-between border-b border-border/80 pb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-serif text-sm font-bold text-foreground">
+                              {language === 'si' ? 'දැනුම්දීම්' : 'Notifications'}
+                            </span>
+                            {unreadCount > 0 && (
+                              <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 border border-primary/20">
+                                {unreadCount} {language === 'si' ? 'නොකියවූ' : 'Unread'}
+                              </span>
+                            )}
+                          </div>
+                          {unreadCount > 0 && (
+                            <button
+                              onClick={() => markAllCustomerNotificationsAsRead(user.uid)}
+                              className="text-[11px] font-semibold text-primary hover:underline"
+                            >
+                              {language === 'si' ? 'සියල්ල කියවූ බව සලකුණු කරන්න' : 'Mark all read'}
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="max-h-80 overflow-y-auto space-y-2">
+                          {notifications.length === 0 ? (
+                            <div className="py-8 text-center text-xs text-muted-foreground">
+                              {language === 'si' ? 'දැනුම්දීම් නොමැත.' : 'No notifications yet.'}
+                            </div>
+                          ) : (
+                            notifications.map((notif) => (
+                              <div
+                                key={notif.id}
+                                onClick={() => handleNotificationClick(notif)}
+                                className={`p-3 border transition-colors cursor-pointer space-y-1 ${
+                                  notif.read
+                                    ? 'bg-accent/20 border-border/60 opacity-80 hover:opacity-100'
+                                    : 'bg-primary/5 border-primary/30 shadow-xs'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="font-serif text-xs font-bold text-foreground line-clamp-1">
+                                    {notif.title}
+                                  </span>
+                                  {!notif.read && (
+                                    <span className="h-2 w-2 rounded-full bg-primary" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                                  {notif.message}
+                                </p>
+                                {notif.status && (
+                                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-accent/60 text-foreground px-2 py-0.5 border border-border/60 mt-1">
+                                    Status: {notif.status.replace('_', ' ')}
+                                  </span>
+                                )}
+                              </div>
+                            ))
+                          )}
+                        </div>
+
+                        <div className="border-t border-border/80 pt-2 text-center">
+                          <Link
+                            href="/account/inquiries"
+                            onClick={() => setIsNotifDropdownOpen(false)}
+                            className="text-xs font-semibold text-primary hover:underline"
+                          >
+                            {language === 'si' ? 'විමසීම් සහ ඇණවුම් බලන්න ➔' : 'View Inquiries & Orders ➔'}
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Account Button displaying Customer Name */}
+                <button
+                  onClick={handleAccountClick}
+                  className="flex items-center justify-center gap-1.5 xl:gap-2 h-9 xl:h-10 px-2.5 xl:px-3.5 border border-white/30 bg-white/15 hover:bg-white/25 text-white transition-all duration-200 rounded-none cursor-pointer shrink-0"
+                  aria-label="Account Access"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 xl:w-5 xl:h-5 shrink-0 text-amber-200">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 01-7.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span className="hidden xl:inline text-xs font-bold truncate max-w-[85px] 2xl:max-w-[120px] text-white">
+                    {customerName}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Navigation Bar Icons & Hamburger */}
+            <div className="flex items-center gap-2 lg:hidden">
+              
+              {/* Mobile Notification Bell */}
+              {user && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(!isMobileMenuOpen);
+                    setIsNotifDropdownOpen(!isNotifDropdownOpen);
+                  }}
+                  className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
+                  aria-label="Notifications"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                  </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center bg-rose-500 text-[10px] font-bold text-white shadow-sm">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {/* Quick Mobile Cart */}
               <button
                 onClick={() => setInquiryModalOpen(true)}
-                className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer"
+                className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
                 aria-label="View Selected Inquiry Items"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
                 {cartItemCount > 0 && (
@@ -181,313 +333,171 @@ export default function Navbar() {
                 )}
               </button>
 
-              {/* Customer Notifications Bell Dropdown */}
-              {user && (
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
-                    className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 hover:bg-black/30 text-white transition-all duration-200 rounded-none cursor-pointer"
-                    aria-label="Customer Notifications"
+              {/* Mobile Menu Hamburger Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
+                aria-label="Toggle Navigation Menu"
+              >
+                {isMobileMenuOpen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile Drawer Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-[#823E1C] dark:border-[#5C2B14] bg-[#A0522D] dark:bg-[#783617] text-white backdrop-blur-md transition-all duration-300 shadow-xl max-h-[calc(100dvh-5rem)] overflow-y-auto">
+            <div className="space-y-2 px-4 py-5 sm:px-6">
+              
+              {/* Customer Greeting Header in Mobile Drawer */}
+              <div className="flex items-center justify-between p-3 bg-black/20 border border-white/20 mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 flex items-center justify-center bg-white text-[#A0522D] font-bold text-xs">
+                    {customerName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white">{customerName}</p>
+                    <p className="text-[10px] text-stone-200">{user ? user.email : (language === 'si' ? 'ආගන්තුක පරිශීලක' : 'Guest Visitor')}</p>
+                  </div>
+                </div>
+                {user && unreadCount > 0 && (
+                  <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5">
+                    {unreadCount} {language === 'si' ? 'අලුත්' : 'New'}
+                  </span>
+                )}
+              </div>
+
+              {/* Mobile Nav Links */}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 text-base font-semibold transition-all duration-200 ${
+                      isActive
+                        ? 'bg-white/20 text-white font-bold border-l-4 border-amber-300'
+                        : 'text-white/90 hover:bg-white/10 hover:text-white'
+                    }`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                    </svg>
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center bg-rose-500 text-[10px] font-bold text-white shadow-sm animate-pulse">
-                        {unreadCount}
-                      </span>
+                    {link.label}
+                  </Link>
+                );
+              })}
+
+              {/* Notifications link for mobile */}
+              {user && (
+                <Link
+                  href="/account/inquiries"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-4 py-3 text-base font-semibold text-white/90 hover:bg-white/10 hover:text-white"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>🔔</span> {language === 'si' ? 'මගේ දැනුම්දීම් සහ ඇණවුම්' : 'My Notifications & Orders'}
+                  </span>
+                  {unreadCount > 0 && (
+                    <span className="bg-rose-500 text-white text-xs font-bold px-2 py-0.5">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+
+              <div className="flex flex-col gap-4 border-t border-white/20 pt-4 mt-3">
+                
+                {/* Language Switcher */}
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-xs font-semibold text-stone-200 uppercase">{language === 'si' ? 'භාෂාව' : 'Language'}</span>
+                  <div className="flex items-center bg-black/20 p-1 border border-white/20">
+                    <button
+                      onClick={() => {
+                        setLanguage('en');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                        language === 'en'
+                          ? 'bg-white text-[#A0522D] font-bold shadow-sm'
+                          : 'text-white/80'
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => {
+                        setLanguage('si');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                        language === 'si'
+                          ? 'bg-white text-[#A0522D] font-bold shadow-sm'
+                          : 'text-white/80'
+                      }`}
+                    >
+                      සිංහල
+                    </button>
+                  </div>
+                </div>
+
+                {/* Theme Toggle */}
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-xs font-semibold text-stone-200 uppercase">{language === 'si' ? 'තේමා මාදිලිය' : 'Theme Mode'}</span>
+                  <button
+                    onClick={() => {
+                      toggleTheme();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 border border-white/20 bg-black/20 px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 cursor-pointer"
+                  >
+                    {theme === 'light' ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-amber-300">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                        </svg>
+                        {language === 'si' ? 'අඳුරු මාදිලිය' : 'Dark Mode'}
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-amber-300">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38l1.59 1.59M3 12h2.25m13.5 0H21m-16.78 6.78l1.59-1.59M18.78 5.22l-1.59 1.59M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z" />
+                        </svg>
+                        {language === 'si' ? 'ආලෝක මාදිලිය' : 'Light Mode'}
+                      </>
                     )}
                   </button>
-
-                  {/* Dropdown Menu */}
-                  {isNotifDropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] bg-card border border-border text-foreground shadow-2xl z-50 animate-in fade-in duration-150 p-4 space-y-3">
-                      <div className="flex items-center justify-between border-b border-border/80 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-serif text-sm font-bold text-foreground">Notifications</span>
-                          {unreadCount > 0 && (
-                            <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 border border-primary/20">
-                              {unreadCount} Unread
-                            </span>
-                          )}
-                        </div>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={() => markAllCustomerNotificationsAsRead(user.uid)}
-                            className="text-[11px] font-semibold text-primary hover:underline"
-                          >
-                            Mark all read
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="max-h-80 overflow-y-auto space-y-2">
-                        {notifications.length === 0 ? (
-                          <div className="py-8 text-center text-xs text-muted-foreground">
-                            No notifications yet.
-                          </div>
-                        ) : (
-                          notifications.map((notif) => (
-                            <div
-                              key={notif.id}
-                              onClick={() => handleNotificationClick(notif)}
-                              className={`p-3 border transition-colors cursor-pointer space-y-1 ${
-                                notif.read
-                                  ? 'bg-accent/20 border-border/60 opacity-80 hover:opacity-100'
-                                  : 'bg-primary/5 border-primary/30 shadow-xs'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="font-serif text-xs font-bold text-foreground line-clamp-1">
-                                  {notif.title}
-                                </span>
-                                {!notif.read && (
-                                  <span className="h-2 w-2 rounded-full bg-primary" />
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                                {notif.message}
-                              </p>
-                              {notif.status && (
-                                <span className="inline-block text-[10px] font-semibold uppercase tracking-wider bg-accent/60 text-foreground px-2 py-0.5 border border-border/60 mt-1">
-                                  Status: {notif.status.replace('_', ' ')}
-                                </span>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-
-                      <div className="border-t border-border/80 pt-2 text-center">
-                        <Link
-                          href="/account/inquiries"
-                          onClick={() => setIsNotifDropdownOpen(false)}
-                          className="text-xs font-semibold text-primary hover:underline"
-                        >
-                          View Inquiries & Orders ➔
-                        </Link>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              )}
 
-              {/* Account Button displaying Customer Name */}
-              <button
-                onClick={handleAccountClick}
-                className="flex items-center gap-2.5 px-4 py-2 border border-white/30 bg-white/15 hover:bg-white/25 text-white transition-all duration-200 rounded-none cursor-pointer"
-                aria-label="Account Access"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 shrink-0 text-amber-200">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 01-7.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-                <span className="text-xs font-bold truncate max-w-[120px] text-white">
-                  {customerName}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Bar Icons & Hamburger */}
-          <div className="flex items-center gap-2 lg:hidden">
-            
-            {/* Mobile Notification Bell */}
-            {user && (
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(!isMobileMenuOpen);
-                  setIsNotifDropdownOpen(!isNotifDropdownOpen);
-                }}
-                className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
-                aria-label="Notifications"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                </svg>
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center bg-rose-500 text-[10px] font-bold text-white shadow-sm">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            )}
-
-            {/* Quick Mobile Cart */}
-            <button
-              onClick={() => setInquiryModalOpen(true)}
-              className="relative flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
-              aria-label="View Selected Inquiry Items"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center bg-amber-400 text-[10px] font-bold text-stone-950 shadow-sm">
-                  {cartItemCount}
-                </span>
-              )}
-            </button>
-
-            {/* Mobile Menu Hamburger Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex items-center justify-center w-10 h-10 border border-white/20 bg-black/20 dark:bg-black/40 text-white transition-all duration-200 rounded-none cursor-pointer"
-              aria-label="Toggle Navigation Menu"
-            >
-              {isMobileMenuOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Drawer Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#823E1C] dark:border-[#5C2B14] bg-[#A0522D] dark:bg-[#783617] text-white backdrop-blur-md transition-all duration-300 shadow-xl max-h-[85vh] overflow-y-auto">
-          <div className="space-y-2 px-4 py-5 sm:px-6">
-            
-            {/* Customer Greeting Header in Mobile Drawer */}
-            <div className="flex items-center justify-between p-3 bg-black/20 border border-white/20 mb-2">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 flex items-center justify-center bg-white text-[#A0522D] font-bold text-xs">
-                  {customerName.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-white">{customerName}</p>
-                  <p className="text-[10px] text-stone-200">{user ? user.email : 'Guest Visitor'}</p>
-                </div>
-              </div>
-              {user && unreadCount > 0 && (
-                <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5">
-                  {unreadCount} New
-                </span>
-              )}
-            </div>
-
-            {/* Mobile Nav Links */}
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-4 py-3 text-base font-semibold transition-all duration-200 ${
-                    isActive
-                      ? 'bg-white/20 text-white font-bold border-l-4 border-amber-300'
-                      : 'text-white/90 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-
-            {/* Notifications link for mobile */}
-            {user && (
-              <Link
-                href="/account/inquiries"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-between px-4 py-3 text-base font-semibold text-white/90 hover:bg-white/10 hover:text-white"
-              >
-                <span className="flex items-center gap-2">
-                  <span>🔔</span> My Notifications & Orders
-                </span>
-                {unreadCount > 0 && (
-                  <span className="bg-rose-500 text-white text-xs font-bold px-2 py-0.5">
-                    {unreadCount}
-                  </span>
-                )}
-              </Link>
-            )}
-
-            <div className="flex flex-col gap-4 border-t border-white/20 pt-4 mt-3">
-              
-              {/* Language Switcher */}
-              <div className="flex items-center justify-between px-2">
-                <span className="text-xs font-semibold text-stone-200 uppercase">Language</span>
-                <div className="flex items-center bg-black/20 p-1 border border-white/20">
-                  <button
-                    onClick={() => {
-                      setLanguage('en');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                      language === 'en'
-                        ? 'bg-white text-[#A0522D] font-bold shadow-sm'
-                        : 'text-white/80'
-                    }`}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLanguage('si');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                      language === 'si'
-                        ? 'bg-white text-[#A0522D] font-bold shadow-sm'
-                        : 'text-white/80'
-                    }`}
-                  >
-                    සිංහල
-                  </button>
-                </div>
-              </div>
-
-              {/* Theme Toggle */}
-              <div className="flex items-center justify-between px-2">
-                <span className="text-xs font-semibold text-stone-200 uppercase">Theme Mode</span>
+                {/* Mobile Account / Login CTA */}
                 <button
                   onClick={() => {
-                    toggleTheme();
                     setIsMobileMenuOpen(false);
+                    handleAccountClick();
                   }}
-                  className="flex items-center gap-2 border border-white/20 bg-black/20 px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 cursor-pointer"
+                  className="flex w-full items-center justify-center gap-2 bg-white hover:bg-stone-100 text-[#A0522D] px-4 py-3.5 text-sm font-bold shadow-md transition-all duration-200 mt-2 cursor-pointer"
                 >
-                  {theme === 'light' ? (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-amber-300">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                      </svg>
-                      Dark Mode
-                    </>
-                  ) : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-amber-300">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38l1.59 1.59M3 12h2.25m13.5 0H21m-16.78 6.78l1.59-1.59M18.78 5.22l-1.59 1.59M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z" />
-                      </svg>
-                      Light Mode
-                    </>
-                  )}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 01-7.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  {user 
+                    ? (language === 'si' ? `මගේ ගිණුම (${customerName})` : `My Account (${customerName})`) 
+                    : (language === 'si' ? 'පිවිසෙන්න / ලියාපදිංචි වන්න' : 'Login / Register')}
                 </button>
               </div>
-
-              {/* Mobile Account / Login CTA */}
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleAccountClick();
-                }}
-                className="flex w-full items-center justify-center gap-2 bg-white hover:bg-stone-100 text-[#A0522D] px-4 py-3.5 text-sm font-bold shadow-md transition-all duration-200 mt-2 cursor-pointer"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 01-7.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-                {user ? `My Account (${customerName})` : 'Login / Register'}
-              </button>
             </div>
           </div>
-        </div>
-      )}
-    </nav>
+        )}
+      </header>
+      {/* Fixed header layout spacer - guarantees page content starts cleanly below the 80px fixed header */}
+      <div className="h-20 w-full shrink-0" aria-hidden="true" />
+    </>
   );
 }
